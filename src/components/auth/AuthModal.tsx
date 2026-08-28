@@ -18,7 +18,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   onClose,
   initialMode = 'login',
 }) => {
-  const { login, signup, googleLogin, savedAccounts, loginWithSavedAccount, removeSavedAccount } = useAuth();
+  const { login, signup, googleLogin, savedAccounts, loginWithSavedAccount, removeSavedAccount, resetPassword } = useAuth();
   const { success, error } = useToast();
 
   const [mode, setMode] = useState<'login' | 'signup' | 'reset'>(initialMode);
@@ -157,14 +157,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
   };
 
-  const handleResetSubmit = (e: React.FormEvent) => {
+  const handleResetSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!resetEmail.trim()) {
       error('Please enter your registered email address.');
       return;
     }
-    setResetSent(true);
-    success(`Password reset link sent to ${resetEmail}. Check your inbox.`);
+    setLoading(true);
+    const res = await resetPassword(resetEmail.trim());
+    setLoading(false);
+    if (res.success) {
+      setResetSent(true);
+      success(res.message || `Password reset link sent to ${resetEmail}. Check your inbox.`);
+    } else {
+      error(res.message || 'Failed to send password reset link.');
+    }
   };
 
   return (

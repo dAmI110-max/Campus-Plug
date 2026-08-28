@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { StorageService } from '../../services/storageService';
+import { SupabaseService } from '../../services/supabaseService';
+import { uploadImageToSupabase, isSupabaseConfigured } from '../../lib/supabase';
 import { ProductCondition, Category, Campus } from '../../types';
 import {
   X,
@@ -68,16 +70,27 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     setImageUrls(imageUrls.filter((_, idx) => idx !== index));
   };
 
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        error('Image size exceeds 5MB limit.');
+        return;
+      }
+      if (isSupabaseConfigured()) {
+        const { url: uploadedUrl } = await uploadImageToSupabase(file, 'listings');
+        if (uploadedUrl) {
+          handleAddImage(uploadedUrl);
+          return;
+        }
+      }
       // Create local object URL for preview
       const localUrl = URL.createObjectURL(file);
       handleAddImage(localUrl);
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!currentUser) {
@@ -106,6 +119,29 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/(^-|-$)+/g, '') + `-${Date.now().toString().slice(-4)}`;
 
+      // 1. Supabase insert if configured
+      if (isSupabaseConfigured()) {
+        await SupabaseService.createListing({
+          sellerId: currentUser.id,
+          sellerName: currentUser.fullName,
+          sellerAvatar: currentUser.avatarUrl,
+          sellerCampus: selectedCampus?.name || currentUser.campusName || 'Osogbo Main Campus',
+          sellerPhone: currentUser.phone,
+          sellerWhatsapp: currentUser.whatsapp || currentUser.phone,
+          categoryId,
+          categoryName: selectedCategory?.name || 'General',
+          title: title.trim(),
+          slug,
+          description: description.trim(),
+          price: Number(price),
+          condition,
+          campusId,
+          images: imagesToUse,
+          status: 'active',
+        });
+      }
+
+      // 2. Local cache insert
       StorageService.createProduct({
         sellerId: currentUser.id,
         sellerName: currentUser.fullName,

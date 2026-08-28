@@ -10,6 +10,7 @@ interface ProductGridProps {
   onProductClick: (product: Product) => void;
   onFavoriteToggle?: (productId: string) => void;
   onResetFilters?: () => void;
+  onStartSelling?: () => void;
 }
 
 export const ProductGrid: React.FC<ProductGridProps> = ({
@@ -18,6 +19,7 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
   onProductClick,
   onFavoriteToggle,
   onResetFilters,
+  onStartSelling,
 }) => {
   if (isLoading) {
     return (
@@ -33,10 +35,10 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
     return (
       <EmptyState
         type="search"
-        title="No products found"
-        description="We couldn't find any items matching your active criteria. Try broadening your keywords or clearing selected filters."
-        actionText="Reset Filters"
-        onAction={onResetFilters}
+        title="No listings yet"
+        description="Be the first student to sell on CampusPlug."
+        actionText={onStartSelling ? "Start Selling" : "Reset Filters"}
+        onAction={onStartSelling || onResetFilters}
       />
     );
   }

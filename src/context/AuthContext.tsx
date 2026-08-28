@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { UserProfile, AcademicLevel, UserRole, SellerStatus, AdminPermissions } from '../types';
 import { StorageService } from '../services/storageService';
+import { SupabaseService, SUPER_ADMIN_EMAIL, SECONDARY_ADMIN_EMAIL } from '../services/supabaseService';
+import { getSupabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface SignupData {
   fullName: string;
@@ -34,7 +36,9 @@ interface AuthContextType {
   loginWithSavedAccount: (userId: string) => Promise<{ success: boolean; message?: string }>;
   removeSavedAccount: (userId: string) => void;
   signup: (data: SignupData) => Promise<{ success: boolean; message?: string }>;
-  logout: () => void;
+  logout: () => Promise<void>;
+  resetPassword: (email: string) => Promise<{ success: boolean; message?: string }>;
+  updatePassword: (newPassword: string) => Promise<{ success: boolean; message?: string }>;
   updateProfile: (updates: Partial<UserProfile>) => Promise<{ success: boolean; message?: string }>;
   completeSellerOnboarding: (data: {
     sellerBio?: string;
@@ -46,6 +50,7 @@ interface AuthContextType {
   switchDemoUser: (userId: string) => void;
   demoUsers: UserProfile[];
   refreshUser: () => void;
+  isSupabaseConnected: boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -55,6 +60,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isLoading, setIsLoading] = useState(true);
   const [demoUsers, setDemoUsers] = useState<UserProfile[]>([]);
   const [savedAccounts, setSavedAccounts] = useState<UserProfile[]>([]);
+  const isSupabaseConnected = isSupabaseConfigured();
 
   const refreshUser = useCallback(() => {
     StorageService.initialize();
@@ -65,27 +71,138 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(false);
   }, []);
 
+  // Initialize session & Supabase auth listener
   useEffect(() => {
-    refreshUser();
+    let mounted = true;
 
-    // Listen for storage updates
+    async function initAuth() {
+      const client = getSupabase();
+      if (client && isSupabaseConfigured()) {
+        try {
+          const { data: sessionData } = await client.auth.getSession();
+          if (sessionData?.session?.user && mounted) {
+            const profile = await SupabaseService.fetchProfile(sessionData.session.user.id);
+            if (profile) {
+              setCurrentUser(profile);
+              StorageService.updateUser(profile.id, profile);
+              StorageService.setCurrentUser(profile.id);
+            }
+          } else {
+            refreshUser();
+          }
+        } catch {
+          refreshUser();
+        }
+      } else {
+        refreshUser();
+      }
+      if (mounted) {
+        setIsLoading(false);
+      }
+    }
+
+    initAuth();
+
+    // Supabase Auth State Change Listener
+    const client = getSupabase();
+    let authSubscription: { unsubscribe: () => void } | null = null;
+
+    if (client && isSupabaseConfigured()) {
+      const { data: { subscription } } = client.auth.onAuthStateChange(async (event, session) => {
+        if (!mounted) return;
+
+        if (event === 'SIGNED_IN' && session?.user) {
+          const profile = await SupabaseService.fetchProfile(session.user.id);
+          if (profile) {
+            setCurrentUser(profile);
+            StorageService.updateUser(profile.id, profile);
+            StorageService.setCurrentUser(profile.id);
+          }
+        } else if (event === 'SIGNED_OUT') {
+          setCurrentUser(null);
+          StorageService.setCurrentUser(null);
+        } else if (event === 'USER_UPDATED' && session?.user) {
+          const profile = await SupabaseService.fetchProfile(session.user.id);
+          if (profile) {
+            setCurrentUser(profile);
+          }
+        }
+      });
+      authSubscription = subscription;
+    }
+
+    // Local storage event listener
     const handleStorageUpdate = () => {
       refreshUser();
     };
 
     window.addEventListener('campusplug_storage_update', handleStorageUpdate);
     return () => {
+      mounted = false;
+      if (authSubscription) {
+        authSubscription.unsubscribe();
+      }
       window.removeEventListener('campusplug_storage_update', handleStorageUpdate);
     };
   }, [refreshUser]);
 
-  const login = async (email: string, _password?: string): Promise<{ success: boolean; message?: string }> => {
+  const login = async (email: string, password?: string): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
-    // Simulate brief network authentication
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    
+
+    // 1. Try Supabase Auth if configured
+    if (isSupabaseConfigured()) {
+      const res = await SupabaseService.signIn(email, password);
+      if (res.success && res.user) {
+        setCurrentUser(res.user);
+        StorageService.updateUser(res.user.id, res.user);
+        StorageService.setCurrentUser(res.user.id);
+        StorageService.addSavedAccount(res.user);
+        setSavedAccounts(StorageService.getSavedAccounts());
+        setIsLoading(false);
+        return { success: true };
+      } else if (!res.success && password) {
+        // If password was supplied to Supabase and failed, return error
+        setIsLoading(false);
+        return { success: false, message: res.message || 'Invalid email or password.' };
+      }
+    }
+
+    // 2. Fallback to storage users
+    await new Promise((resolve) => setTimeout(resolve, 250));
     const users = StorageService.getUsers();
-    const user = users.find((u) => u.email.toLowerCase() === email.toLowerCase() || u.username.toLowerCase() === email.toLowerCase());
+    const clean = email.toLowerCase().trim();
+    let user = users.find((u) => u.email.toLowerCase() === clean || u.username.toLowerCase() === clean);
+
+    // Check if this is the super admin email logging in
+    const isSuperAdminEmail = clean === SUPER_ADMIN_EMAIL.toLowerCase() || clean === SECONDARY_ADMIN_EMAIL.toLowerCase();
+
+    if (!user && isSuperAdminEmail) {
+      user = StorageService.createUser({
+        fullName: clean.includes('damilare') ? 'Oluwadamilare Bhadmus' : 'Dave Brown',
+        username: clean.split('@')[0],
+        email: clean,
+        avatarUrl: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80',
+        role: 'SUPER_ADMIN',
+        sellerStatus: 'VERIFIED_SELLER',
+        sellerOnboardingCompleted: true,
+        universityId: 'uni-uniosun',
+        universityName: 'Osun State University',
+        campusId: 'campus-osogbo',
+        campusName: 'Osogbo Main Campus',
+        facultyId: 'fac-eng',
+        facultyName: 'Faculty of Engineering',
+        departmentId: 'dept-mech',
+        departmentName: 'Mechanical Engineering',
+        level: 'Postgraduate',
+        bio: 'Founder & Super Administrator of CampusPlug by Ace Tech.',
+        phone: '+2348012345678',
+        whatsapp: '2348012345678',
+        showPhonePublicly: true,
+        showDepartmentPublicly: true,
+        verificationBadge: 'trusted_seller',
+        accountStatus: 'active',
+      });
+    }
 
     if (!user) {
       setIsLoading(false);
@@ -95,6 +212,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user.accountStatus === 'suspended' || user.accountStatus === 'banned' || user.accountStatus === 'SUSPENDED') {
       setIsLoading(false);
       return { success: false, message: 'This account has been suspended by CampusPlug safety moderation.' };
+    }
+
+    // Ensure Super Admin privileges if email matches
+    if (isSuperAdminEmail && user.role !== 'SUPER_ADMIN') {
+      const updated = StorageService.updateUser(user.id, {
+        role: 'SUPER_ADMIN',
+        sellerStatus: 'VERIFIED_SELLER',
+        sellerOnboardingCompleted: true,
+      });
+      if (updated) user = updated;
     }
 
     StorageService.setCurrentUser(user.id);
@@ -111,32 +238,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     avatarUrl?: string;
   }): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 350));
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     const targetEmail = (account?.email || 'davesbrown88@gmail.com').toLowerCase().trim();
-    const targetName = account?.name || (targetEmail.includes('davesbrown') ? 'Dave Brown' : 'UNIOSUN Scholar');
+    const targetName = account?.name || (targetEmail.includes('damilare') ? 'Oluwadamilare Bhadmus' : 'Dave Brown');
     const targetAvatar =
       account?.avatarUrl ||
-      (targetEmail.includes('davesbrown')
-        ? 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80'
-        : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80');
+      'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80';
 
     const users = StorageService.getUsers();
     let user = users.find((u) => u.email.toLowerCase() === targetEmail);
 
     const isSuperAdminEmail =
-      targetEmail === StorageService.SUPER_ADMIN_EMAIL.toLowerCase() ||
-      targetEmail === 'davesbrown88@gmail.com';
+      targetEmail === SUPER_ADMIN_EMAIL.toLowerCase() ||
+      targetEmail === SECONDARY_ADMIN_EMAIL.toLowerCase();
 
     if (!user) {
-      // Create authenticated Google user
       const username = targetEmail.split('@')[0].replace(/[^a-zA-Z0-9_]/g, '') || `user_${Date.now()}`;
       user = StorageService.createUser({
         fullName: targetName,
         username: username,
         email: targetEmail,
         avatarUrl: targetAvatar,
-        role: isSuperAdminEmail ? 'SUPER_ADMIN' : 'USER',
+        role: isSuperAdminEmail ? 'SUPER_ADMIN' : 'STUDENT',
         sellerStatus: isSuperAdminEmail ? 'VERIFIED_SELLER' : 'NOT_SELLER',
         sellerOnboardingCompleted: isSuperAdminEmail,
         universityId: 'uni-uniosun',
@@ -149,7 +273,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         departmentName: 'Mechanical Engineering',
         level: '300L',
         bio: isSuperAdminEmail
-          ? 'Founder & Super Administrator of CampusPlug by Ace Tech. Managing multi-campus student commerce and ecosystem trust.'
+          ? 'Founder & Super Administrator of CampusPlug by Ace Tech.'
           : 'Student at Osun State University connected via Google.',
         phone: isSuperAdminEmail ? '+2348012345678' : undefined,
         whatsapp: isSuperAdminEmail ? '2348012345678' : undefined,
@@ -161,7 +285,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         accountStatus: 'active',
       });
     } else {
-      // Ensure Super Admin status if email matches
       if (isSuperAdminEmail && user.role !== 'SUPER_ADMIN') {
         const updated = StorageService.updateUser(user.id, {
           role: 'SUPER_ADMIN',
@@ -186,7 +309,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return {
       success: true,
       message: isSuperAdminEmail
-        ? `Welcome Dave Brown! Signed in as Super Administrator.`
+        ? `Signed in as Super Administrator.`
         : `Signed in as ${user.fullName}`,
     };
   };
@@ -223,18 +346,35 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signup = async (data: SignupData): Promise<{ success: boolean; message?: string }> => {
     setIsLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 350));
 
-    const users = StorageService.getUsers();
-    const existing = users.find(
-      (u) => u.email.toLowerCase() === data.email.toLowerCase() || u.username.toLowerCase() === data.username.toLowerCase()
-    );
+    const isSuperAdminEmail = SupabaseService.isSuperAdminEmail(data.email);
 
-    if (existing) {
-      setIsLoading(false);
-      return { success: false, message: 'An account with this email or username already exists on CampusPlug.' };
+    // 1. Supabase Signup if configured
+    if (isSupabaseConfigured()) {
+      const supaRes = await SupabaseService.signUp({
+        email: data.email,
+        password: data.password,
+        fullName: data.fullName,
+        username: data.username,
+        universityId: data.universityId,
+        campusId: data.campusId,
+        facultyId: data.facultyId,
+        departmentId: data.departmentId,
+        level: data.level,
+        phone: data.phone,
+        whatsapp: data.whatsapp,
+        bio: data.bio,
+        avatarUrl: data.avatarUrl,
+        role: isSuperAdminEmail ? 'SUPER_ADMIN' : 'STUDENT',
+      });
+
+      if (!supaRes.success) {
+        setIsLoading(false);
+        return { success: false, message: supaRes.message };
+      }
     }
 
+    // 2. Also register in local storage cache
     const universities = StorageService.getUniversities();
     const campuses = StorageService.getCampuses();
     const faculties = StorageService.getFaculties();
@@ -245,8 +385,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const selectedFaculty = faculties.find((f) => f.id === data.facultyId);
     const selectedDept = departments.find((d) => d.id === data.departmentId);
 
-    const isSuperAdminEmail = data.email.toLowerCase().trim() === StorageService.SUPER_ADMIN_EMAIL.toLowerCase();
-
     const newUser = StorageService.createUser({
       fullName: data.fullName,
       username: data.username.toLowerCase().trim(),
@@ -254,7 +392,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       avatarUrl:
         data.avatarUrl ||
         `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=200&q=80`,
-      role: isSuperAdminEmail ? 'SUPER_ADMIN' : 'USER',
+      role: isSuperAdminEmail ? 'SUPER_ADMIN' : 'STUDENT',
       sellerStatus: isSuperAdminEmail ? 'VERIFIED_SELLER' : 'NOT_SELLER',
       sellerOnboardingCompleted: isSuperAdminEmail,
       universityId: data.universityId,
@@ -266,7 +404,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       departmentId: data.departmentId,
       departmentName: selectedDept?.name,
       level: data.level || '100L',
-      bio: data.bio || 'New student on CampusPlug! Looking forward to connecting with fellow students.',
+      bio: data.bio || 'Student on CampusPlug.',
       phone: data.phone,
       whatsapp: data.whatsapp || (data.phone ? data.phone.replace(/[^0-9]/g, '') : undefined),
       telegram: data.telegram,
@@ -274,15 +412,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       showDepartmentPublicly: true,
       rating: 5.0,
       totalRatings: 1,
-      verificationBadge: 'unverified',
+      verificationBadge: isSuperAdminEmail ? 'trusted_seller' : 'unverified',
       accountStatus: 'active',
     });
 
-    // Create a welcome notification
     StorageService.createNotification({
       userId: newUser.id,
       title: 'Welcome to CampusPlug!',
-      message: `Welcome ${newUser.fullName}! You are registered under ${newUser.universityName} (${newUser.campusName}). Explore student listings, find hostels, or start selling with escrow protection.`,
+      message: `Welcome ${newUser.fullName}! You are registered under ${newUser.universityName} (${newUser.campusName}).`,
       type: 'system_announcement',
     });
 
@@ -294,14 +431,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return { success: true };
   };
 
-  const logout = () => {
+  const logout = async () => {
+    if (isSupabaseConfigured()) {
+      await SupabaseService.signOut();
+    }
     StorageService.setCurrentUser(null);
     setCurrentUser(null);
+  };
+
+  const resetPassword = async (email: string): Promise<{ success: boolean; message?: string }> => {
+    if (isSupabaseConfigured()) {
+      return await SupabaseService.resetPasswordForEmail(email);
+    }
+    // Fallback simulation
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    return { success: true, message: `Password reset link sent to ${email}.` };
+  };
+
+  const updatePassword = async (newPassword: string): Promise<{ success: boolean; message?: string }> => {
+    if (isSupabaseConfigured()) {
+      return await SupabaseService.updateUserPassword(newPassword);
+    }
+    return { success: true, message: 'Password updated successfully.' };
   };
 
   const updateProfile = async (updates: Partial<UserProfile>): Promise<{ success: boolean; message?: string }> => {
     if (!currentUser) return { success: false, message: 'You must be logged in to update your profile.' };
 
+    // 1. Supabase update if configured
+    if (isSupabaseConfigured()) {
+      await SupabaseService.updateProfile(currentUser.id, updates);
+    }
+
+    // 2. Local update
     const updated = StorageService.updateUser(currentUser.id, updates);
     if (updated) {
       setCurrentUser(updated);
@@ -319,6 +481,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }): Promise<{ success: boolean; message?: string }> => {
     if (!currentUser) return { success: false, message: 'Please sign in first.' };
 
+    // 1. Supabase seller onboarding
+    if (isSupabaseConfigured()) {
+      await SupabaseService.completeSellerOnboarding(currentUser.id, {
+        sellerName: currentUser.fullName,
+        sellerBio: data.sellerBio,
+        profileImage: currentUser.avatarUrl,
+        phone: data.phone || currentUser.phone,
+        whatsapp: data.whatsapp || currentUser.whatsapp,
+        faculty: currentUser.facultyName,
+        department: currentUser.departmentName,
+        campusId: currentUser.campusId,
+        pickupLocations: data.sellerPickupLocations,
+      });
+    }
+
+    // 2. Local storage seller onboarding
     const res = StorageService.completeSellerOnboarding(currentUser.id, data);
     if (res.success && res.user) {
       setCurrentUser(res.user);
@@ -336,12 +514,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
-  const isSuperAdmin = StorageService.isSuperAdmin(currentUser);
-  const isAdmin = StorageService.isAdmin(currentUser);
+  const isSuperAdmin =
+    currentUser?.role === 'SUPER_ADMIN' ||
+    SupabaseService.isSuperAdminEmail(currentUser?.email);
+
+  const isAdmin =
+    isSuperAdmin ||
+    currentUser?.role === 'ADMIN' ||
+    StorageService.isAdmin(currentUser);
 
   const sellerStatus: SellerStatus =
     currentUser?.sellerStatus ||
-    (currentUser?.role === 'seller' ? 'SELLER' : isSuperAdmin ? 'VERIFIED_SELLER' : 'NOT_SELLER');
+    (currentUser?.role === 'SELLER' || currentUser?.role === 'seller' ? 'SELLER' : isSuperAdmin ? 'VERIFIED_SELLER' : 'NOT_SELLER');
 
   const isSeller =
     sellerStatus === 'SELLER' ||
@@ -353,7 +537,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (!currentUser) return false;
     if (isSuperAdmin) return true;
     if (!isAdmin) return false;
-    if (!currentUser.adminPermissions) return true; // Default admin has all if not restricted
+    if (!currentUser.adminPermissions) return true;
     return !!currentUser.adminPermissions[permission];
   };
 
@@ -376,12 +560,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         removeSavedAccount,
         signup,
         logout,
+        resetPassword,
+        updatePassword,
         updateProfile,
         completeSellerOnboarding,
         hasAdminPermission,
         switchDemoUser,
         demoUsers,
         refreshUser,
+        isSupabaseConnected,
       }}
     >
       {children}

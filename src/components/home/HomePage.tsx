@@ -209,16 +209,34 @@ export const HomePage: React.FC<HomePageProps> = ({
             </button>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
-            {latestProducts.slice(0, 8).map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                onClick={onProductClick}
-                onFavoriteToggle={onFavoriteToggle}
-              />
-            ))}
-          </div>
+          {latestProducts.length > 0 ? (
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+              {latestProducts.slice(0, 8).map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onClick={onProductClick}
+                  onFavoriteToggle={onFavoriteToggle}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12 px-4 rounded-3xl bg-slate-50 dark:bg-slate-800/40 border border-dashed border-slate-200 dark:border-slate-800">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 mx-auto flex items-center justify-center mb-3">
+                <ShoppingBag className="w-6 h-6" />
+              </div>
+              <h3 className="text-base font-bold text-slate-900 dark:text-white">No listings yet</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
+                Be the first student to sell on CampusPlug.
+              </p>
+              <button
+                onClick={onOpenCreateProduct}
+                className="mt-4 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm transition-colors shadow-sm cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" /> Start Selling
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

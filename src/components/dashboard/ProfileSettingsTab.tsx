@@ -3,6 +3,7 @@ import { UserProfile, Campus, Faculty, Department, Category } from '../../types'
 import { StorageService } from '../../services/storageService';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
+import { uploadImageToSupabase } from '../../lib/supabase';
 import {
   Save,
   Shield,
@@ -79,7 +80,7 @@ export const ProfileSettingsTab: React.FC<ProfileSettingsTabProps> = ({
   const departments: Department[] = StorageService.getDepartments(facultyId);
 
   // Handle Photo File Upload
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setImageError(null);
     const file = e.target.files?.[0];
     if (!file) return;
@@ -92,13 +93,22 @@ export const ProfileSettingsTab: React.FC<ProfileSettingsTabProps> = ({
       return;
     }
 
-    // Validate size (< 2MB)
-    if (file.size > 2 * 1024 * 1024) {
-      setImageError('Image size exceeds 2MB limit. Please choose a smaller photo.');
-      error('Image size exceeds 2MB limit. Please choose a smaller photo.');
+    // Validate size (< 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setImageError('Image size exceeds 5MB limit. Please choose a smaller photo.');
+      error('Image size exceeds 5MB limit. Please choose a smaller photo.');
       return;
     }
 
+    // Try Supabase Storage upload
+    const { url: supabaseUrl, error: uploadErr } = await uploadImageToSupabase(file, 'avatars', `avatar_${user.id}_${Date.now()}`);
+    if (supabaseUrl && !uploadErr) {
+      setAvatarUrl(supabaseUrl);
+      success('Photo uploaded to storage! Click Save Profile Changes to apply.');
+      return;
+    }
+
+    // Fallback to Data URL
     const reader = new FileReader();
     reader.onload = (event) => {
       if (typeof event.target?.result === 'string') {

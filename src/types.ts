@@ -17,7 +17,7 @@ export type AppViewMode =
   | 'businesses'
   | 'ads';
 
-export type UserRole = 'USER' | 'ADMIN' | 'SUPER_ADMIN' | 'student' | 'seller' | 'admin' | 'super_admin';
+export type UserRole = 'USER' | 'STUDENT' | 'SELLER' | 'ADMIN' | 'SUPER_ADMIN' | 'student' | 'seller' | 'admin' | 'super_admin';
 export type SellerStatus = 'NOT_SELLER' | 'SELLER' | 'VERIFIED_SELLER' | 'RESTRICTED_SELLER' | 'SUSPENDED_SELLER';
 export type AccountStatus = 'ACTIVE' | 'SUSPENDED' | 'RESTRICTED' | 'DELETED' | 'active' | 'suspended' | 'pending' | 'banned';
 export type VerificationBadge = 'unverified' | 'verified_student' | 'trusted_seller';
@@ -178,6 +178,7 @@ export interface Product {
   slug: string;
   description: string;
   price: number;
+  originalPrice?: number;
   currency: string;
   condition: ProductCondition;
   tradeMode?: TradeMode;
@@ -186,6 +187,10 @@ export interface Product {
   universityId: string;
   status: ProductStatus;
   views: number;
+  viewsCount?: number;
+  favoritesCount?: number;
+  negotiable?: boolean;
+  deliveryAvailable?: boolean;
   featured: boolean;
   images: string[];
   createdAt: string;
