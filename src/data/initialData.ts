@@ -142,34 +142,11 @@ export const INITIAL_CAMPUSES: Campus[] = [
 ];
 
 export const INITIAL_FACULTIES: Faculty[] = [
+  // --- UNIOSUN Faculties & Colleges ---
   {
-    id: 'fac-eng',
+    id: 'fac-computing',
     universityId: 'uni-uniosun',
-    name: 'Faculty of Engineering & Environmental Sciences',
-    status: 'active',
-  },
-  {
-    id: 'fac-health',
-    universityId: 'uni-uniosun',
-    name: 'College of Health Sciences (Medicine, Nursing, Med Lab)',
-    status: 'active',
-  },
-  {
-    id: 'fac-law',
-    universityId: 'uni-uniosun',
-    name: 'Faculty of Law',
-    status: 'active',
-  },
-  {
-    id: 'fac-humanities',
-    universityId: 'uni-uniosun',
-    name: 'Faculty of Humanities and Culture',
-    status: 'active',
-  },
-  {
-    id: 'fac-socsci',
-    universityId: 'uni-uniosun',
-    name: 'Faculty of Social Sciences & Management',
+    name: 'Faculty of Computing and Information Technology',
     status: 'active',
   },
   {
@@ -179,32 +156,267 @@ export const INITIAL_FACULTIES: Faculty[] = [
     status: 'active',
   },
   {
+    id: 'fac-eng',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Engineering',
+    status: 'active',
+  },
+  {
+    id: 'fac-env',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Environmental Sciences',
+    status: 'active',
+  },
+  {
+    id: 'fac-basic-med',
+    universityId: 'uni-uniosun',
+    name: 'College of Health Sciences - Faculty of Basic Medical Sciences',
+    status: 'active',
+  },
+  {
+    id: 'fac-clinical-sciences',
+    universityId: 'uni-uniosun',
+    name: 'College of Health Sciences - Faculty of Clinical Sciences',
+    status: 'active',
+  },
+  {
+    id: 'fac-nursing-allied',
+    universityId: 'uni-uniosun',
+    name: 'College of Health Sciences - Faculty of Nursing & Allied Health Sciences',
+    status: 'active',
+  },
+  {
     id: 'fac-agric',
     universityId: 'uni-uniosun',
-    name: 'Faculty of Agriculture',
+    name: 'Faculty of Agriculture (Ejigbo Campus)',
+    status: 'active',
+  },
+  {
+    id: 'fac-renewable-res',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Renewable Natural Resources (Ejigbo Campus)',
+    status: 'active',
+  },
+  {
+    id: 'fac-humanities',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Humanities and Culture (Ikire Campus)',
+    status: 'active',
+  },
+  {
+    id: 'fac-socsci',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Social Sciences (Okuku Campus)',
+    status: 'active',
+  },
+  {
+    id: 'fac-mgmt-sci',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Management Sciences (Okuku Campus)',
+    status: 'active',
+  },
+  {
+    id: 'fac-law',
+    universityId: 'uni-uniosun',
+    name: 'Faculty of Law (Ifetedo Campus)',
     status: 'active',
   },
   {
     id: 'fac-edu',
     universityId: 'uni-uniosun',
-    name: 'Faculty of Education',
+    name: 'Faculty of Education (Ipetu-Ijesha Campus)',
     status: 'active',
   },
+
+  // --- OAU Faculties ---
+  { id: 'fac-oau-tech', universityId: 'uni-oau', name: 'Faculty of Technology', status: 'active' },
+  { id: 'fac-oau-sci', universityId: 'uni-oau', name: 'Faculty of Science', status: 'active' },
+  { id: 'fac-oau-admin', universityId: 'uni-oau', name: 'Faculty of Administration', status: 'active' },
+  { id: 'fac-oau-arts', universityId: 'uni-oau', name: 'Faculty of Arts', status: 'active' },
+  { id: 'fac-oau-edu', universityId: 'uni-oau', name: 'Faculty of Education', status: 'active' },
+  { id: 'fac-oau-edm', universityId: 'uni-oau', name: 'Faculty of Environmental Design & Management', status: 'active' },
+  { id: 'fac-oau-law', universityId: 'uni-oau', name: 'Faculty of Law', status: 'active' },
+  { id: 'fac-oau-pharm', universityId: 'uni-oau', name: 'Faculty of Pharmacy', status: 'active' },
+  { id: 'fac-oau-socsci', universityId: 'uni-oau', name: 'Faculty of Social Sciences', status: 'active' },
+  { id: 'fac-oau-agric', universityId: 'uni-oau', name: 'Faculty of Agriculture', status: 'active' },
+  { id: 'fac-oau-health', universityId: 'uni-oau', name: 'College of Health Sciences', status: 'active' },
+
+  // --- UNILAG Faculties ---
+  { id: 'fac-unilag-eng', universityId: 'uni-unilag', name: 'Faculty of Engineering', status: 'active' },
+  { id: 'fac-unilag-sci', universityId: 'uni-unilag', name: 'Faculty of Science', status: 'active' },
+  { id: 'fac-unilag-mgmt', universityId: 'uni-unilag', name: 'Faculty of Management Sciences', status: 'active' },
+  { id: 'fac-unilag-socsci', universityId: 'uni-unilag', name: 'Faculty of Social Sciences', status: 'active' },
+  { id: 'fac-unilag-arts', universityId: 'uni-unilag', name: 'Faculty of Arts', status: 'active' },
+  { id: 'fac-unilag-law', universityId: 'uni-unilag', name: 'Faculty of Law', status: 'active' },
+  { id: 'fac-unilag-env', universityId: 'uni-unilag', name: 'Faculty of Environmental Sciences', status: 'active' },
+  { id: 'fac-unilag-edu', universityId: 'uni-unilag', name: 'Faculty of Education', status: 'active' },
+  { id: 'fac-unilag-med', universityId: 'uni-unilag', name: 'College of Medicine (CMUL)', status: 'active' },
+  { id: 'fac-unilag-pharm', universityId: 'uni-unilag', name: 'Faculty of Pharmacy', status: 'active' },
+
+  // --- UI Faculties ---
+  { id: 'fac-ui-sci', universityId: 'uni-ui', name: 'Faculty of Science', status: 'active' },
+  { id: 'fac-ui-tech', universityId: 'uni-ui', name: 'Faculty of Technology', status: 'active' },
+  { id: 'fac-ui-arts', universityId: 'uni-ui', name: 'Faculty of Arts', status: 'active' },
+  { id: 'fac-ui-socsci', universityId: 'uni-ui', name: 'Faculty of The Social Sciences', status: 'active' },
+  { id: 'fac-ui-econ', universityId: 'uni-ui', name: 'Faculty of Economics and Management Sciences', status: 'active' },
+  { id: 'fac-ui-agric', universityId: 'uni-ui', name: 'Faculty of Agriculture', status: 'active' },
+  { id: 'fac-ui-law', universityId: 'uni-ui', name: 'Faculty of Law', status: 'active' },
+  { id: 'fac-ui-edu', universityId: 'uni-ui', name: 'Faculty of Education', status: 'active' },
+  { id: 'fac-ui-pharm', universityId: 'uni-ui', name: 'Faculty of Pharmacy', status: 'active' },
+  { id: 'fac-ui-med', universityId: 'uni-ui', name: 'College of Medicine', status: 'active' },
+  { id: 'fac-ui-vet', universityId: 'uni-ui', name: 'Faculty of Veterinary Medicine', status: 'active' },
+  { id: 'fac-ui-forestry', universityId: 'uni-ui', name: 'Faculty of Renewable Natural Resources', status: 'active' },
 ];
 
 export const INITIAL_DEPARTMENTS: Department[] = [
+  // --- UNIOSUN: Faculty of Computing and Information Technology ---
+  { id: 'dept-comp-cs', facultyId: 'fac-computing', name: 'Computer Science', status: 'active' },
+  { id: 'dept-comp-it', facultyId: 'fac-computing', name: 'Information Technology', status: 'active' },
+  { id: 'dept-comp-cyber', facultyId: 'fac-computing', name: 'Cyber Security', status: 'active' },
+  { id: 'dept-comp-se', facultyId: 'fac-computing', name: 'Software Engineering', status: 'active' },
+  { id: 'dept-comp-ds', facultyId: 'fac-computing', name: 'Data Science & Artificial Intelligence', status: 'active' },
+  { id: 'dept-comp-is', facultyId: 'fac-computing', name: 'Information Systems', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Basic and Applied Sciences ---
+  { id: 'dept-micro', facultyId: 'fac-science', name: 'Microbiology', status: 'active' },
+  { id: 'dept-biochem', facultyId: 'fac-science', name: 'Biochemistry', status: 'active' },
+  { id: 'dept-plant-bio', facultyId: 'fac-science', name: 'Plant Biology & Biotechnology', status: 'active' },
+  { id: 'dept-zoo', facultyId: 'fac-science', name: 'Zoology & Environmental Biology', status: 'active' },
+  { id: 'dept-chem', facultyId: 'fac-science', name: 'Industrial & Pure Chemistry', status: 'active' },
+  { id: 'dept-geol', facultyId: 'fac-science', name: 'Geology & Applied Geophysics', status: 'active' },
+  { id: 'dept-math', facultyId: 'fac-science', name: 'Mathematics & Industrial Mathematics', status: 'active' },
+  { id: 'dept-physics', facultyId: 'fac-science', name: 'Physics with Electronics', status: 'active' },
+  { id: 'dept-stats', facultyId: 'fac-science', name: 'Statistics & Operations Research', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Engineering ---
   { id: 'dept-mech', facultyId: 'fac-eng', name: 'Mechanical Engineering', status: 'active' },
   { id: 'dept-civil', facultyId: 'fac-eng', name: 'Civil Engineering', status: 'active' },
   { id: 'dept-elect', facultyId: 'fac-eng', name: 'Electrical & Electronics Engineering', status: 'active' },
-  { id: 'dept-med', facultyId: 'fac-health', name: 'Medicine & Surgery (MBBS)', status: 'active' },
-  { id: 'dept-nurs', facultyId: 'fac-health', name: 'Nursing Science', status: 'active' },
-  { id: 'dept-mls', facultyId: 'fac-health', name: 'Medical Laboratory Science', status: 'active' },
-  { id: 'dept-law', facultyId: 'fac-law', name: 'Commercial & Public Law (LL.B)', status: 'active' },
-  { id: 'dept-cs', facultyId: 'fac-science', name: 'Computer Science', status: 'active' },
-  { id: 'dept-micro', facultyId: 'fac-science', name: 'Microbiology', status: 'active' },
-  { id: 'dept-acc', facultyId: 'fac-socsci', name: 'Accounting & Finance', status: 'active' },
+  { id: 'dept-mechatronics', facultyId: 'fac-eng', name: 'Mechatronics Engineering', status: 'active' },
+  { id: 'dept-agric-eng', facultyId: 'fac-eng', name: 'Agricultural & Bio-Resources Engineering', status: 'active' },
+  { id: 'dept-chem-eng', facultyId: 'fac-eng', name: 'Chemical Engineering', status: 'active' },
+  { id: 'dept-materials-eng', facultyId: 'fac-eng', name: 'Materials & Metallurgical Engineering', status: 'active' },
+  { id: 'dept-biomed-eng', facultyId: 'fac-eng', name: 'Biomedical Engineering', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Environmental Sciences ---
+  { id: 'dept-arch', facultyId: 'fac-env', name: 'Architecture', status: 'active' },
+  { id: 'dept-urp', facultyId: 'fac-env', name: 'Urban and Regional Planning', status: 'active' },
+  { id: 'dept-estate', facultyId: 'fac-env', name: 'Estate Management', status: 'active' },
+  { id: 'dept-building', facultyId: 'fac-env', name: 'Building Technology', status: 'active' },
+  { id: 'dept-qs', facultyId: 'fac-env', name: 'Quantity Surveying', status: 'active' },
+  { id: 'dept-survey', facultyId: 'fac-env', name: 'Surveying and Geoinformatics', status: 'active' },
+
+  // --- UNIOSUN: Basic Medical Sciences ---
+  { id: 'dept-anatomy', facultyId: 'fac-basic-med', name: 'Human Anatomy', status: 'active' },
+  { id: 'dept-physio', facultyId: 'fac-basic-med', name: 'Human Physiology', status: 'active' },
+  { id: 'dept-med-biochem', facultyId: 'fac-basic-med', name: 'Medical Biochemistry', status: 'active' },
+  { id: 'dept-pharm', facultyId: 'fac-basic-med', name: 'Pharmacology & Therapeutics', status: 'active' },
+
+  // --- UNIOSUN: Clinical Sciences ---
+  { id: 'dept-med', facultyId: 'fac-clinical-sciences', name: 'Medicine & Surgery (MBBS)', status: 'active' },
+  { id: 'dept-comm-med', facultyId: 'fac-clinical-sciences', name: 'Community Medicine & Primary Health', status: 'active' },
+  { id: 'dept-obgyn', facultyId: 'fac-clinical-sciences', name: 'Obstetrics and Gynaecology', status: 'active' },
+  { id: 'dept-paediatrics', facultyId: 'fac-clinical-sciences', name: 'Paediatrics & Child Health', status: 'active' },
+  { id: 'dept-internal-med', facultyId: 'fac-clinical-sciences', name: 'Internal Medicine', status: 'active' },
+  { id: 'dept-surgery', facultyId: 'fac-clinical-sciences', name: 'Surgery', status: 'active' },
+  { id: 'dept-pathology', facultyId: 'fac-clinical-sciences', name: 'Pathology & Haematology', status: 'active' },
+  { id: 'dept-radiology', facultyId: 'fac-clinical-sciences', name: 'Radiology & Radiation Medicine', status: 'active' },
+
+  // --- UNIOSUN: Nursing & Allied Health Sciences ---
+  { id: 'dept-nurs', facultyId: 'fac-nursing-allied', name: 'Nursing Science', status: 'active' },
+  { id: 'dept-mls', facultyId: 'fac-nursing-allied', name: 'Medical Laboratory Science (MLS)', status: 'active' },
+  { id: 'dept-public-health', facultyId: 'fac-nursing-allied', name: 'Public Health Science', status: 'active' },
+  { id: 'dept-radiography', facultyId: 'fac-nursing-allied', name: 'Radiography and Radiation Science', status: 'active' },
+  { id: 'dept-physiotherapy', facultyId: 'fac-nursing-allied', name: 'Physiotherapy & Rehabilitation', status: 'active' },
+  { id: 'dept-nutrition', facultyId: 'fac-nursing-allied', name: 'Human Nutrition & Dietetics', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Agriculture (Ejigbo) ---
+  { id: 'dept-agric-econ', facultyId: 'fac-agric', name: 'Agricultural Economics & Agribusiness', status: 'active' },
+  { id: 'dept-agric-ext', facultyId: 'fac-agric', name: 'Agricultural Extension & Rural Development', status: 'active' },
+  { id: 'dept-animal-sci', facultyId: 'fac-agric', name: 'Animal Science & Livestock Production', status: 'active' },
+  { id: 'dept-agronomy', facultyId: 'fac-agric', name: 'Agronomy & Crop Production', status: 'active' },
+  { id: 'dept-fisheries', facultyId: 'fac-agric', name: 'Fisheries & Aquaculture', status: 'active' },
+  { id: 'dept-soil-sci', facultyId: 'fac-agric', name: 'Soil Science & Land Management', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Renewable Natural Resources ---
+  { id: 'dept-wildlife', facultyId: 'fac-renewable-res', name: 'Wildlife Management & Ecotourism', status: 'active' },
+  { id: 'dept-forestry', facultyId: 'fac-renewable-res', name: 'Forest Resources Management', status: 'active' },
+  { id: 'dept-fisheries-mgmt', facultyId: 'fac-renewable-res', name: 'Fisheries Management', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Humanities and Culture (Ikire) ---
+  { id: 'dept-english', facultyId: 'fac-humanities', name: 'English & Literary Studies', status: 'active' },
+  { id: 'dept-ling-yoruba', facultyId: 'fac-humanities', name: 'Linguistics & Nigerian Languages (Yoruba)', status: 'active' },
+  { id: 'dept-french', facultyId: 'fac-humanities', name: 'French & International Studies', status: 'active' },
+  { id: 'dept-history', facultyId: 'fac-humanities', name: 'History & International Studies', status: 'active' },
+  { id: 'dept-theatre', facultyId: 'fac-humanities', name: 'Theatre Arts & Performing Arts', status: 'active' },
+  { id: 'dept-philosophy', facultyId: 'fac-humanities', name: 'Philosophy', status: 'active' },
+  { id: 'dept-rel-studies', facultyId: 'fac-humanities', name: 'Religious Studies (Christian / Islamic)', status: 'active' },
+  { id: 'dept-mass', facultyId: 'fac-humanities', name: 'Communication & Media Studies / Mass Comm', status: 'active' },
+  { id: 'dept-music', facultyId: 'fac-humanities', name: 'Music & Creative Arts', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Social Sciences (Okuku) ---
   { id: 'dept-econ', facultyId: 'fac-socsci', name: 'Economics', status: 'active' },
-  { id: 'dept-mass', facultyId: 'fac-humanities', name: 'Linguistics & Communication', status: 'active' },
+  { id: 'dept-pol-sci', facultyId: 'fac-socsci', name: 'Political Science & International Relations', status: 'active' },
+  { id: 'dept-soc', facultyId: 'fac-socsci', name: 'Sociology & Criminology', status: 'active' },
+  { id: 'dept-geog', facultyId: 'fac-socsci', name: 'Geography & Resource Management', status: 'active' },
+  { id: 'dept-psychology', facultyId: 'fac-socsci', name: 'Psychology', status: 'active' },
+  { id: 'dept-demography', facultyId: 'fac-socsci', name: 'Demography & Social Statistics', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Management Sciences (Okuku) ---
+  { id: 'dept-acc', facultyId: 'fac-mgmt-sci', name: 'Accounting', status: 'active' },
+  { id: 'dept-bank-fin', facultyId: 'fac-mgmt-sci', name: 'Banking and Finance', status: 'active' },
+  { id: 'dept-bus-admin', facultyId: 'fac-mgmt-sci', name: 'Business Administration', status: 'active' },
+  { id: 'dept-marketing', facultyId: 'fac-mgmt-sci', name: 'Marketing & Consumer Studies', status: 'active' },
+  { id: 'dept-irpm', facultyId: 'fac-mgmt-sci', name: 'Industrial Relations & Personnel Management (IRPM)', status: 'active' },
+  { id: 'dept-pub-admin', facultyId: 'fac-mgmt-sci', name: 'Public Administration', status: 'active' },
+  { id: 'dept-tourism', facultyId: 'fac-mgmt-sci', name: 'Tourism & Hospitality Management', status: 'active' },
+  { id: 'dept-entrepreneurship', facultyId: 'fac-mgmt-sci', name: 'Entrepreneurship Studies', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Law (Ifetedo) ---
+  { id: 'dept-law', facultyId: 'fac-law', name: 'Commercial, Business & Industrial Law (LL.B)', status: 'active' },
+  { id: 'dept-pub-law', facultyId: 'fac-law', name: 'Public and International Law', status: 'active' },
+  { id: 'dept-priv-law', facultyId: 'fac-law', name: 'Private and Property Law', status: 'active' },
+  { id: 'dept-jurisprudence', facultyId: 'fac-law', name: 'Jurisprudence & Legal Theory', status: 'active' },
+
+  // --- UNIOSUN: Faculty of Education (Ipetu-Ijesha) ---
+  { id: 'dept-stem-edu', facultyId: 'fac-edu', name: 'Science & Mathematics Education (Bio, Chem, Phy, Math)', status: 'active' },
+  { id: 'dept-cs-edu', facultyId: 'fac-edu', name: 'Computer Science Education', status: 'active' },
+  { id: 'dept-edu-found', facultyId: 'fac-edu', name: 'Educational Foundations & Guidance/Counselling', status: 'active' },
+  { id: 'dept-arts-edu', facultyId: 'fac-edu', name: 'Arts & Humanities Education (English, History)', status: 'active' },
+  { id: 'dept-soc-edu', facultyId: 'fac-edu', name: 'Social Sciences Education (Economics, Pol Sci)', status: 'active' },
+  { id: 'dept-edu-mgmt', facultyId: 'fac-edu', name: 'Educational Management & Policy', status: 'active' },
+  { id: 'dept-voc-edu', facultyId: 'fac-edu', name: 'Vocational and Technical Education', status: 'active' },
+  { id: 'dept-early-childhood', facultyId: 'fac-edu', name: 'Early Childhood & Primary Education', status: 'active' },
+  { id: 'dept-kinetics', facultyId: 'fac-edu', name: 'Human Kinetics & Health Education', status: 'active' },
+
+  // --- OAU Departments ---
+  { id: 'dept-oau-cs', facultyId: 'fac-oau-tech', name: 'Computer Science & Engineering', status: 'active' },
+  { id: 'dept-oau-elect', facultyId: 'fac-oau-tech', name: 'Electronic & Electrical Engineering', status: 'active' },
+  { id: 'dept-oau-mech', facultyId: 'fac-oau-tech', name: 'Mechanical Engineering', status: 'active' },
+  { id: 'dept-oau-civil', facultyId: 'fac-oau-tech', name: 'Civil Engineering', status: 'active' },
+  { id: 'dept-oau-chem', facultyId: 'fac-oau-sci', name: 'Chemistry', status: 'active' },
+  { id: 'dept-oau-micro', facultyId: 'fac-oau-sci', name: 'Microbiology', status: 'active' },
+  { id: 'dept-oau-acc', facultyId: 'fac-oau-admin', name: 'Management & Accounting', status: 'active' },
+  { id: 'dept-oau-law', facultyId: 'fac-oau-law', name: 'Law (LL.B)', status: 'active' },
+  { id: 'dept-oau-med', facultyId: 'fac-oau-health', name: 'Medicine & Surgery (MBBS)', status: 'active' },
+  { id: 'dept-oau-nurs', facultyId: 'fac-oau-health', name: 'Nursing Science', status: 'active' },
+
+  // --- UNILAG Departments ---
+  { id: 'dept-unilag-cs', facultyId: 'fac-unilag-sci', name: 'Computer Sciences', status: 'active' },
+  { id: 'dept-unilag-elect', facultyId: 'fac-unilag-eng', name: 'Electrical & Electronics Engineering', status: 'active' },
+  { id: 'dept-unilag-mech', facultyId: 'fac-unilag-eng', name: 'Mechanical Engineering', status: 'active' },
+  { id: 'dept-unilag-acc', facultyId: 'fac-unilag-mgmt', name: 'Accounting', status: 'active' },
+  { id: 'dept-unilag-bus', facultyId: 'fac-unilag-mgmt', name: 'Business Administration', status: 'active' },
+  { id: 'dept-unilag-law', facultyId: 'fac-unilag-law', name: 'Law (LL.B)', status: 'active' },
+  { id: 'dept-unilag-med', facultyId: 'fac-unilag-med', name: 'Medicine and Surgery (MBBS)', status: 'active' },
+
+  // --- UI Departments ---
+  { id: 'dept-ui-cs', facultyId: 'fac-ui-sci', name: 'Computer Science', status: 'active' },
+  { id: 'dept-ui-elect', facultyId: 'fac-ui-tech', name: 'Electrical & Electronic Engineering', status: 'active' },
+  { id: 'dept-ui-mech', facultyId: 'fac-ui-tech', name: 'Mechanical Engineering', status: 'active' },
+  { id: 'dept-ui-econ', facultyId: 'fac-ui-econ', name: 'Economics', status: 'active' },
+  { id: 'dept-ui-law', facultyId: 'fac-ui-law', name: 'Law (LL.B)', status: 'active' },
+  { id: 'dept-ui-med', facultyId: 'fac-ui-med', name: 'Medicine & Surgery (MBBS)', status: 'active' },
 ];
 
 export const INITIAL_CATEGORIES: Category[] = [

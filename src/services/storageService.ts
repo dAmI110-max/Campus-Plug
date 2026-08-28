@@ -221,7 +221,7 @@ export class StorageService {
     }
 
     // Dynamic one-time migration & demo data purge (checked via version flag to prevent infinite loops)
-    const MIGRATION_VERSION = 'v4_clean_production_no_demo';
+    const MIGRATION_VERSION = 'v5_uniosun_complete_faculties_and_computing';
     const currentMigration = localStorage.getItem('campusplug_migration_ver');
 
     if (currentMigration !== MIGRATION_VERSION) {
@@ -239,7 +239,13 @@ export class StorageService {
         const cleanFavorites = existingFavorites.filter((f) => !this.DEMO_PRODUCT_IDS.has(f.productId));
         localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(cleanFavorites));
 
-        // 3. Ensure bhadmusoluwadamilare@gmail.com is designated Super Admin
+        // 3. Ensure complete up-to-date faculties and departments (including Computing & IT)
+        localStorage.setItem(STORAGE_KEYS.FACULTIES, JSON.stringify(INITIAL_FACULTIES));
+        localStorage.setItem(STORAGE_KEYS.DEPARTMENTS, JSON.stringify(INITIAL_DEPARTMENTS));
+        localStorage.setItem(STORAGE_KEYS.CAMPUSES, JSON.stringify(INITIAL_CAMPUSES));
+        localStorage.setItem(STORAGE_KEYS.UNIVERSITIES, JSON.stringify(INITIAL_UNIVERSITIES));
+
+        // 4. Ensure bhadmusoluwadamilare@gmail.com is designated Super Admin
         const users = this.getUsers();
         const hasDamilare = users.some((u) => u.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase());
         let cleanUsers = [...users];
@@ -261,7 +267,7 @@ export class StorageService {
         }
         localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(cleanUsers));
 
-        // 4. Ensure Super Admin admin records
+        // 5. Ensure Super Admin admin records
         const adminRecords = getItem<AdminUserRecord[]>(STORAGE_KEYS.ADMIN_USERS, []);
         const hasDamilareAdmin = adminRecords.some((a) => a.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase());
         const cleanAdmins = [...adminRecords];
@@ -362,13 +368,22 @@ export class StorageService {
   }
 
   static getFaculties(universityId?: string): Faculty[] {
-    const faculties = getItem<Faculty[]>(STORAGE_KEYS.FACULTIES, INITIAL_FACULTIES);
+    let faculties = getItem<Faculty[]>(STORAGE_KEYS.FACULTIES, INITIAL_FACULTIES);
+    // Ensure all new initial faculties (like Faculty of Computing) are always present
+    if (!faculties || faculties.length < INITIAL_FACULTIES.length || !faculties.some(f => f.id === 'fac-computing')) {
+      faculties = INITIAL_FACULTIES;
+      setItem(STORAGE_KEYS.FACULTIES, INITIAL_FACULTIES);
+    }
     if (!universityId) return faculties;
     return faculties.filter((f) => f.universityId === universityId);
   }
 
   static getDepartments(facultyId?: string): Department[] {
-    const depts = getItem<Department[]>(STORAGE_KEYS.DEPARTMENTS, INITIAL_DEPARTMENTS);
+    let depts = getItem<Department[]>(STORAGE_KEYS.DEPARTMENTS, INITIAL_DEPARTMENTS);
+    if (!depts || depts.length < INITIAL_DEPARTMENTS.length || !depts.some(d => d.facultyId === 'fac-computing')) {
+      depts = INITIAL_DEPARTMENTS;
+      setItem(STORAGE_KEYS.DEPARTMENTS, INITIAL_DEPARTMENTS);
+    }
     if (!facultyId) return depts;
     return depts.filter((d) => d.facultyId === facultyId);
   }

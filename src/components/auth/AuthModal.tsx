@@ -38,8 +38,8 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const [signupPassword, setSignupPassword] = useState('');
   const [universityId, setUniversityId] = useState('uni-uniosun');
   const [campusId, setCampusId] = useState('campus-osogbo');
-  const [facultyId, setFacultyId] = useState('fac-eng');
-  const [departmentId, setDepartmentId] = useState('dept-mech');
+  const [facultyId, setFacultyId] = useState('fac-computing');
+  const [departmentId, setDepartmentId] = useState('dept-comp-cs');
   const [level, setLevel] = useState<AcademicLevel>('300L');
   const [phone, setPhone] = useState('');
   const [whatsapp, setWhatsapp] = useState('');
@@ -52,6 +52,26 @@ export const AuthModal: React.FC<AuthModalProps> = ({
   const campuses = StorageService.getCampuses(universityId);
   const faculties = StorageService.getFaculties(universityId);
   const departments = StorageService.getDepartments(facultyId);
+
+  const handleUniversityChange = (newUniId: string) => {
+    setUniversityId(newUniId);
+    const newCampuses = StorageService.getCampuses(newUniId);
+    if (newCampuses.length > 0) setCampusId(newCampuses[0].id);
+    const newFacs = StorageService.getFaculties(newUniId);
+    if (newFacs.length > 0) {
+      setFacultyId(newFacs[0].id);
+      const newDepts = StorageService.getDepartments(newFacs[0].id);
+      if (newDepts.length > 0) setDepartmentId(newDepts[0].id);
+    }
+  };
+
+  const handleFacultyChange = (newFacId: string) => {
+    setFacultyId(newFacId);
+    const newDepts = StorageService.getDepartments(newFacId);
+    if (newDepts.length > 0) {
+      setDepartmentId(newDepts[0].id);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -515,7 +535,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Campus</label>
                   <select
@@ -531,15 +551,11 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Faculty</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Faculty / College</label>
                   <select
                     value={facultyId}
-                    onChange={(e) => {
-                      setFacultyId(e.target.value);
-                      const newDepts = StorageService.getDepartments(e.target.value);
-                      if (newDepts.length > 0) setDepartmentId(newDepts[0].id);
-                    }}
-                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white truncate"
+                    onChange={(e) => handleFacultyChange(e.target.value)}
+                    className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
                   >
                     {faculties.map((f) => (
                       <option key={f.id} value={f.id}>
@@ -548,6 +564,21 @@ export const AuthModal: React.FC<AuthModalProps> = ({
                     ))}
                   </select>
                 </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Department / Programme</label>
+                <select
+                  value={departmentId}
+                  onChange={(e) => setDepartmentId(e.target.value)}
+                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white"
+                >
+                  {departments.map((d) => (
+                    <option key={d.id} value={d.id}>
+                      {d.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div>
