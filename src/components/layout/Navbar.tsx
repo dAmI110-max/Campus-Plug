@@ -26,24 +26,9 @@ import {
 } from 'lucide-react';
 import { CampusPlugLogo } from '../common/CampusPlugLogo';
 import { ThemeToggle } from '../common/ThemeToggle';
+import { AppViewMode } from '../../types';
 
-export type AppViewMode =
-  | 'home'
-  | 'study'
-  | 'marketplace'
-  | 'accommodation'
-  | 'roommates'
-  | 'services'
-  | 'jobs'
-  | 'events'
-  | 'communities'
-  | 'businesses'
-  | 'ads'
-  | 'orders'
-  | 'wallet'
-  | 'messages'
-  | 'dashboard'
-  | 'admin';
+export type { AppViewMode };
 
 interface NavbarProps {
   currentView: AppViewMode;
@@ -524,7 +509,9 @@ export const Navbar: React.FC<NavbarProps> = ({
                     <div className="text-xs font-bold text-slate-900 dark:text-white leading-tight flex items-center gap-1">
                       {currentUser.fullName.split(' ')[0]}
                       {userVerification?.status === 'approved' && (
-                        <ShieldCheck className="w-3 h-3 text-indigo-600 dark:text-indigo-400" title="Verified Student" />
+                        <span title="Verified Student">
+                          <ShieldCheck className="w-3 h-3 text-indigo-600 dark:text-indigo-400" />
+                        </span>
                       )}
                     </div>
                     <div className="text-[10px] text-slate-400 dark:text-slate-500 capitalize">

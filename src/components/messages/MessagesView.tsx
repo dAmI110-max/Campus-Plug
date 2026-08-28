@@ -190,7 +190,9 @@ export const MessagesView: React.FC<MessagesViewProps> = ({
                         <div className="flex items-center gap-1 min-w-0">
                           <span className="font-extrabold text-xs text-slate-900 truncate">{other.name}</span>
                           {other.verificationBadge && (
-                            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600 shrink-0" title="Verified Student" />
+                            <span title="Verified Student" className="inline-flex shrink-0">
+                              <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                            </span>
                           )}
                         </div>
                         <span className="text-[10px] text-slate-400 shrink-0 font-medium">

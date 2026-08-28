@@ -204,7 +204,9 @@ export const RoommateFinderView: React.FC<RoommateFinderViewProps> = ({
                     <div>
                       <div className="flex items-center gap-1.5">
                         <span className="font-extrabold text-sm text-slate-900">{profile.userName}</span>
-                        <ShieldCheck className="w-4 h-4 text-indigo-600" title="Verified Student" />
+                        <span title="Verified Student">
+                          <ShieldCheck className="w-4 h-4 text-indigo-600" />
+                        </span>
                       </div>
                       <span className="text-[11px] text-slate-500 font-medium block">
                         {profile.department} &bull; {profile.level}

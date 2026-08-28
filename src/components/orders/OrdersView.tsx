@@ -28,14 +28,22 @@ import { motion, AnimatePresence } from 'motion/react';
 interface OrdersViewProps {
   onBack?: () => void;
   onOpenChatWithUser?: (targetUserId: string, orderId?: string, productId?: string) => void;
+  onOpenChat?: (targetUserId: string, orderId?: string, productId?: string) => void;
   onOpenReviewModal?: (order: Order) => void;
+  onOpenReview?: (order: Order) => void;
+  onExploreMarketplace?: () => void;
 }
 
 export const OrdersView: React.FC<OrdersViewProps> = ({
   onBack,
   onOpenChatWithUser,
+  onOpenChat,
   onOpenReviewModal,
+  onOpenReview,
+  onExploreMarketplace,
 }) => {
+  const effectiveOpenChat = onOpenChatWithUser || onOpenChat;
+  const effectiveOpenReview = onOpenReviewModal || onOpenReview;
   const { currentUser } = useAuth();
   const { success, error: showError } = useToast();
 

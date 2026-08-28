@@ -192,6 +192,26 @@ function setItem<T>(key: string, value: T): void {
 }
 
 export class StorageService {
+  // Super Admin designations
+  static readonly SUPER_ADMIN_EMAIL = 'bhadmusoluwadamilare@gmail.com';
+  static readonly SECONDARY_SUPER_ADMIN_EMAIL = 'davesbrown88@gmail.com';
+
+  // Demo product ID blacklist to guarantee no prototype data exists in database
+  private static readonly DEMO_PRODUCT_IDS = new Set([
+    'prod-iphone13',
+    'prod-hppavilion',
+    'prod-nikeaf1',
+    'prod-casiocalc',
+    'prod-ps4pad',
+    'prod-rechargfan',
+    'prod-mattress',
+    'prod-physiologybook',
+    'prod-iron',
+    'prod-powerbank',
+    'prod-barbingservice',
+    'hot-demo-1',
+  ]);
+
   // Initialize default data if not already set
   static initialize(): void {
     const isInit = localStorage.getItem(STORAGE_KEYS.INITIALIZED);
@@ -200,58 +220,84 @@ export class StorageService {
       return;
     }
 
-    // Dynamic migration & privacy cleanup:
-    // 1. Ensure davesbrown88@gmail.com is set as Super Admin and old example email is updated
-    try {
-      const users = this.getUsers();
-      let updated = false;
-      const cleanUsers = users.map((u) => {
-        if (
-          u.email.toLowerCase() === 'bhadmusoluwadamilare@gmail.com' ||
-          u.id === 'usr-superadmin-damilare' ||
-          u.email.toLowerCase() === 'davesbrown88@gmail.com'
-        ) {
-          updated = true;
-          return {
-            ...u,
-            id: 'usr-superadmin-dave',
-            authUserId: 'auth-superadmin-dave',
-            fullName: 'Dave Brown',
-            username: 'davesbrown',
-            email: 'davesbrown88@gmail.com',
-            role: 'SUPER_ADMIN' as const,
-            sellerStatus: 'VERIFIED_SELLER' as const,
-            sellerOnboardingCompleted: true,
-          };
-        }
-        return u;
-      });
+    // Dynamic one-time migration & demo data purge (checked via version flag to prevent infinite loops)
+    const MIGRATION_VERSION = 'v4_clean_production_no_demo';
+    const currentMigration = localStorage.getItem('campusplug_migration_ver');
 
-      if (updated) {
-        setItem(STORAGE_KEYS.USERS, cleanUsers);
+    if (currentMigration !== MIGRATION_VERSION) {
+      try {
+        // 1. Purge prototype / demo products from database
+        const existingProducts = getItem<Product[]>(STORAGE_KEYS.PRODUCTS, []);
+        const cleanProducts = existingProducts.filter((p) => !this.DEMO_PRODUCT_IDS.has(p.id));
+        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(cleanProducts));
+
+        // 2. Clear demo favorites
+        const existingFavorites = getItem<{ id: string; userId: string; productId: string; createdAt: string }[]>(
+          STORAGE_KEYS.FAVORITES,
+          []
+        );
+        const cleanFavorites = existingFavorites.filter((f) => !this.DEMO_PRODUCT_IDS.has(f.productId));
+        localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(cleanFavorites));
+
+        // 3. Ensure bhadmusoluwadamilare@gmail.com is designated Super Admin
+        const users = this.getUsers();
+        const hasDamilare = users.some((u) => u.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase());
+        let cleanUsers = [...users];
+
+        if (!hasDamilare) {
+          cleanUsers.unshift(INITIAL_USERS[0]);
+        } else {
+          cleanUsers = cleanUsers.map((u) => {
+            if (u.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase()) {
+              return {
+                ...u,
+                role: 'SUPER_ADMIN' as const,
+                sellerStatus: 'VERIFIED_SELLER' as const,
+                sellerOnboardingCompleted: true,
+              };
+            }
+            return u;
+          });
+        }
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(cleanUsers));
+
+        // 4. Ensure Super Admin admin records
+        const adminRecords = getItem<AdminUserRecord[]>(STORAGE_KEYS.ADMIN_USERS, []);
+        const hasDamilareAdmin = adminRecords.some((a) => a.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase());
+        const cleanAdmins = [...adminRecords];
+        if (!hasDamilareAdmin) {
+          cleanAdmins.unshift({
+            id: 'admin-rec-superadmin-damilare',
+            userId: 'usr-superadmin-damilare',
+            email: this.SUPER_ADMIN_EMAIL,
+            fullName: 'Oluwadamilare Bhadmus',
+            role: 'SUPER_ADMIN',
+            permissions: {
+              canManageUsers: true,
+              canSuspendUsers: true,
+              canManageListings: true,
+              canFeatureListings: true,
+              canModerateReports: true,
+              canManageFinance: true,
+              canReviewDisputes: true,
+              canManageEvents: true,
+              canManageJobs: true,
+              canModerateCommunities: true,
+              canManageSupport: true,
+              canManageSettings: true,
+            },
+            assignedBy: 'system',
+            assignedByName: 'Ace Tech Platform Security Core',
+            assignedAt: '2025-01-01T00:00:00Z',
+            status: 'active',
+          });
+        }
+        localStorage.setItem(STORAGE_KEYS.ADMIN_USERS, JSON.stringify(cleanAdmins));
+
+        localStorage.setItem('campusplug_migration_ver', MIGRATION_VERSION);
+      } catch (err) {
+        console.warn('CampusPlug Migration Warning:', err);
       }
-
-      // 2. Clean admin user records
-      const adminRecords = getItem<AdminUserRecord[]>(STORAGE_KEYS.ADMIN_USERS, []);
-      const cleanAdmins = adminRecords.map((a) => {
-        if (
-          a.email.toLowerCase() === 'bhadmusoluwadamilare@gmail.com' ||
-          a.email.toLowerCase() === 'davesbrown88@gmail.com' ||
-          a.role === 'SUPER_ADMIN'
-        ) {
-          return {
-            ...a,
-            userId: 'usr-superadmin-dave',
-            email: 'davesbrown88@gmail.com',
-            fullName: 'Dave Brown',
-            role: 'SUPER_ADMIN' as const,
-          };
-        }
-        return a;
-      });
-      setItem(STORAGE_KEYS.ADMIN_USERS, cleanAdmins);
-    } catch {
-      // safe fallback
     }
   }
 
@@ -263,14 +309,11 @@ export class StorageService {
     setItem(STORAGE_KEYS.CATEGORIES, INITIAL_CATEGORIES);
     setItem(STORAGE_KEYS.USERS, INITIAL_USERS);
     setItem(STORAGE_KEYS.SAVED_ACCOUNTS, []);
-    setItem(STORAGE_KEYS.PRODUCTS, INITIAL_PRODUCTS);
+    setItem(STORAGE_KEYS.PRODUCTS, []);
     setItem(STORAGE_KEYS.ACCOMMODATIONS, INITIAL_ACCOMMODATION);
     setItem(STORAGE_KEYS.NOTIFICATIONS, INITIAL_NOTIFICATIONS);
     setItem(STORAGE_KEYS.REPORTS, INITIAL_REPORTS);
-    setItem(STORAGE_KEYS.FAVORITES, [
-      { id: 'fav-1', userId: 'usr-femi', productId: 'prod-iphone13', createdAt: '2025-02-20T10:00:00Z' },
-      { id: 'fav-2', userId: 'usr-tunde', productId: 'prod-nikeaf1', createdAt: '2025-02-21T11:00:00Z' },
-    ]);
+    setItem(STORAGE_KEYS.FAVORITES, []);
     setItem(STORAGE_KEYS.WALLETS, INITIAL_WALLETS);
     setItem(STORAGE_KEYS.WALLET_TRANSACTIONS, INITIAL_WALLET_TRANSACTIONS);
     setItem(STORAGE_KEYS.BANK_ACCOUNTS, INITIAL_BANK_ACCOUNTS);
@@ -420,13 +463,28 @@ export class StorageService {
     return users.find((u) => u.id === id) || null;
   }
 
-  static updateUser(id: string, updates: Partial<UserProfile>): UserProfile | null {
+  static updateUser(id: string, updates: Partial<UserProfile>, callerIsAdmin = false): UserProfile | null {
     const users = this.getUsers();
     const index = users.findIndex((u) => u.id === id);
     if (index === -1) return null;
+
+    // Security sanitization: normal users cannot elevate roles or alter account status / metrics
+    const safeUpdates = { ...updates };
+    if (!callerIsAdmin) {
+      delete safeUpdates.role;
+      delete safeUpdates.accountStatus;
+      delete safeUpdates.verificationBadge;
+      delete safeUpdates.rating;
+      delete safeUpdates.totalRatings;
+      delete safeUpdates.totalCompletedSales;
+      delete safeUpdates.totalOrdersBought;
+      delete (safeUpdates as any).id;
+      delete (safeUpdates as any).authUserId;
+    }
+
     users[index] = {
       ...users[index],
-      ...updates,
+      ...safeUpdates,
       updatedAt: new Date().toISOString(),
     };
     setItem(STORAGE_KEYS.USERS, users);
@@ -464,12 +522,12 @@ export class StorageService {
   }
 
   // --- PHASE 4: SUPER ADMIN & ADMIN RBAC ---
-  static readonly SUPER_ADMIN_EMAIL = 'davesbrown88@gmail.com';
-
   static isSuperAdmin(user: UserProfile | null): boolean {
     if (!user) return false;
+    const email = (user.email || '').toLowerCase().trim();
     return (
-      user.email.toLowerCase() === this.SUPER_ADMIN_EMAIL.toLowerCase() ||
+      email === this.SUPER_ADMIN_EMAIL.toLowerCase() ||
+      email === this.SECONDARY_SUPER_ADMIN_EMAIL.toLowerCase() ||
       user.role === 'SUPER_ADMIN' ||
       user.role === 'super_admin'
     );
@@ -483,10 +541,10 @@ export class StorageService {
 
   static getAdminUsers(): AdminUserRecord[] {
     const defaultSuperAdminRecord: AdminUserRecord = {
-      id: 'admin-rec-superadmin',
-      userId: 'usr-superadmin-dave',
+      id: 'admin-rec-superadmin-damilare',
+      userId: 'usr-superadmin-damilare',
       email: this.SUPER_ADMIN_EMAIL,
-      fullName: 'Dave Brown',
+      fullName: 'Oluwadamilare Bhadmus',
       role: 'SUPER_ADMIN',
       permissions: {
         canManageUsers: true,

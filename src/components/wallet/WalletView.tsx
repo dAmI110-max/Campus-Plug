@@ -397,7 +397,9 @@ export const WalletView: React.FC<{ onNavigateToOrders?: () => void }> = ({ onNa
                     <div className="flex items-center gap-1.5">
                       <span className="font-bold text-xs text-slate-900">{acc.bankName}</span>
                       {acc.verified && (
-                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" title="NIBSS Verified" />
+                        <span title="NIBSS Verified">
+                          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        </span>
                       )}
                     </div>
                     <span className="text-xs font-mono font-bold text-slate-700 block mt-0.5 tracking-wider">

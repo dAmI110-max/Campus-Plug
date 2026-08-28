@@ -12,6 +12,7 @@ interface ReportModalProps {
   targetType: 'product' | 'accommodation' | 'user';
   targetId: string;
   targetTitle?: string;
+  targetName?: string;
   targetUserName?: string;
 }
 

@@ -81,7 +81,7 @@ export const BusinessDetailModal: React.FC<BusinessDetailModalProps> = ({
               <span className="text-slate-400 text-[10px] uppercase font-bold block">Rating</span>
               <span className="font-black text-slate-900 text-sm flex items-center gap-1">
                 <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                {business.rating.toFixed(1)} ({business.reviewCount} reviews)
+                {business.rating.toFixed(1)} ({business.totalReviews ?? business.reviewCount ?? 0} reviews)
               </span>
             </div>
             <div>

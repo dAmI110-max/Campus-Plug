@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { StorageService } from '../../services/storageService';
 import { useToast } from '../../context/ToastContext';
+import { BusinessCategory } from '../../types';
 import {
   X,
   Building2,
@@ -28,7 +29,7 @@ export const CreateBusinessModal: React.FC<CreateBusinessModalProps> = ({
   const campuses = StorageService.getCampuses();
 
   const [businessName, setBusinessName] = useState('');
-  const [category, setCategory] = useState('food');
+  const [category, setCategory] = useState<BusinessCategory>('restaurant');
   const [campusId, setCampusId] = useState(currentUser?.campusId || campuses[0]?.id || 'campus-osogbo');
   const [tagline, setTagline] = useState('');
   const [address, setAddress] = useState('Off Campus Main Gate, Osogbo');
@@ -152,7 +153,7 @@ export const CreateBusinessModal: React.FC<CreateBusinessModalProps> = ({
               </label>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => setCategory(e.target.value as BusinessCategory)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium outline-none focus:border-indigo-500"
               >
                 <option value="food">Food & Eatery</option>

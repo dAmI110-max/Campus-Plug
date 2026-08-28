@@ -202,7 +202,9 @@ export const UserModerationTab: React.FC<UserModerationTabProps> = ({ onRefresh 
                             : u.role}
                         </span>
                         {u.verificationBadge === 'verified_student' && (
-                          <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" title="Verified Student" />
+                          <span title="Verified Student">
+                            <ShieldCheck className="w-3.5 h-3.5 text-indigo-600" />
+                          </span>
                         )}
                       </div>
                     </td>

@@ -32,9 +32,10 @@ import { motion, AnimatePresence } from 'motion/react';
 interface EventsViewProps {
   onBack?: () => void;
   onOpenAuth?: () => void;
+  onOpenWallet?: () => void;
 }
 
-export const EventsView: React.FC<EventsViewProps> = ({ onBack, onOpenAuth }) => {
+export const EventsView: React.FC<EventsViewProps> = ({ onBack, onOpenAuth, onOpenWallet }) => {
   const { currentUser } = useAuth();
   const { success, error: toastError } = useToast();
 

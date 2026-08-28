@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { StorageService } from '../../services/storageService';
 import { useToast } from '../../context/ToastContext';
+import { CommunityCategory } from '../../types';
 import {
   X,
   Users,
@@ -29,7 +30,7 @@ export const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
   const campuses = StorageService.getCampuses();
 
   const [name, setName] = useState('');
-  const [category, setCategory] = useState('tech');
+  const [category, setCategory] = useState<CommunityCategory>('tech');
   const [campusId, setCampusId] = useState(currentUser?.campusId || campuses[0]?.id || 'campus-osogbo');
   const [privacy, setPrivacy] = useState<'public' | 'private'>('public');
   const [description, setDescription] = useState('');
@@ -137,7 +138,7 @@ export const CreateCommunityModal: React.FC<CreateCommunityModalProps> = ({
               </label>
               <select
                 value={category}
-                onChange={(e) => setCategory(e.target.value)}
+                onChange={(e) => setCategory(e.target.value as CommunityCategory)}
                 className="w-full px-3 py-2.5 rounded-xl border border-slate-300 bg-white text-xs font-medium outline-none focus:border-indigo-500"
               >
                 <option value="tech">Tech & Developers</option>

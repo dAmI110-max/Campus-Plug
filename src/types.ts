@@ -122,6 +122,7 @@ export interface UserProfile {
   verificationBadge: VerificationBadge;
   sellerStatus?: SellerStatus;
   sellerBio?: string;
+  sellerCategory?: string;
   sellerPickupLocations?: string[];
   sellerOnboardingCompleted?: boolean;
   adminPermissions?: AdminPermissions;
@@ -669,6 +670,8 @@ export interface ServiceListing {
   pricingModel: ServicePricingModel;
   deliveryMethod: ServiceDeliveryMethod;
   estimatedDeliveryDays: number;
+  turnaroundTime?: string;
+  packages?: { name: string; price: number; description?: string; features?: string[]; deliveryDays?: number }[];
   location: string;
   campusId: string;
   universityId: string;
@@ -709,6 +712,7 @@ export interface ServiceRequest {
   referenceImages?: string[];
   budget: number;
   deadlineDate: string;
+  deadline?: string;
   status: ServiceRequestStatus;
   quoteAmount?: number;
   quoteDeliveryDays?: number;
@@ -747,10 +751,12 @@ export interface Booking {
   customerPhone?: string;
   campusId: string;
   locationVenue: string;
+  location?: string;
   date: string; // YYYY-MM-DD
   timeSlot: string; // "10:00 AM - 11:30 AM"
   durationMinutes: number;
   price: number;
+  totalAmount?: number;
   currency: string;
   status: BookingStatus;
   notes?: string;
@@ -779,7 +785,9 @@ export type JobType =
   | 'remote'
   | 'temporary'
   | 'weekend'
-  | 'event_work';
+  | 'event_work'
+  | 'tutoring'
+  | 'other';
 
 export type JobStatus = 'open' | 'reviewing' | 'closed' | 'filled';
 
@@ -798,6 +806,7 @@ export interface CampusJob {
   jobType?: string;
   category: JobType;
   description: string;
+  applicationInstructions?: string;
   requirements: string[];
   salaryRate: string; // e.g. "₦15,000 / week" or "₦50,000 / month"
   location: string;
@@ -820,6 +829,7 @@ export type JobApplicationStatus =
   | 'shortlisted'
   | 'interview'
   | 'accepted'
+  | 'hired'
   | 'rejected';
 
 export interface JobApplication {
@@ -851,6 +861,7 @@ export interface JobApplication {
   portfolioUrl?: string;
   status: JobApplicationStatus;
   employerNotes?: string;
+  appliedAt?: string;
   submittedAt: string;
   updatedAt: string;
 }
@@ -912,6 +923,7 @@ export interface CampusEvent {
   date: string; // YYYY-MM-DD
   startTime: string; // "16:00"
   endTime: string; // "20:00"
+  time?: string;
   venue: string;
   campusId: string;
   universityId: string;
@@ -919,6 +931,7 @@ export interface CampusEvent {
   images?: string[];
   capacity: number;
   registeredCount: number;
+  attendeesCount?: number;
   ticketPrice: number; // 0 for Free
   currency: string;
   isPaid: boolean;
@@ -936,6 +949,7 @@ export type CampusEventCategory = EventCategory;
 export interface EventTicket {
   id: string;
   ticketCode: string; // e.g. "CP-EVT-93821"
+  ticketNumber?: string;
   eventId: string;
   eventTitle: string;
   eventDate: string;
@@ -951,7 +965,7 @@ export interface EventTicket {
   pricePaid: number;
   paymentReference?: string;
   qrCodeData: string;
-  status: 'valid' | 'used' | 'cancelled';
+  status: 'valid' | 'used' | 'cancelled' | 'checked_in';
   scannedAt?: string;
   checkedInAt?: string;
   scannedBy?: string;
@@ -972,7 +986,13 @@ export type CommunityCategory =
   | 'gaming'
   | 'photography'
   | 'academics'
-  | 'campus_clubs';
+  | 'academic'
+  | 'hostel'
+  | 'creative'
+  | 'sports'
+  | 'general'
+  | 'campus_clubs'
+  | 'other';
 
 export type CommunityPrivacy = 'public' | 'campus_only' | 'private';
 
@@ -1017,6 +1037,7 @@ export interface CommunityPost {
   authorName: string;
   authorAvatar: string;
   authorBadge?: VerificationBadge;
+  authorVerification?: VerificationBadge | string;
   authorDepartment?: string;
   authorLevel?: string;
   title: string;
@@ -1024,9 +1045,14 @@ export interface CommunityPost {
   images?: string[];
   postType: PostType;
   pollOptions?: PollOption[];
+  poll?: any;
   likes: string[]; // user IDs
+  likedBy?: string[];
   commentsCount: number;
+  comments?: any[];
   isPinned?: boolean;
+  pinned?: boolean;
+  isAnnouncement?: boolean;
   isLocked?: boolean;
   createdAt: string;
   updatedAt?: string;
@@ -1048,13 +1074,19 @@ export interface CommunityComment {
 // --- PHASE 3: CAMPUS BUSINESS PAGES ---
 export type BusinessCategory =
   | 'restaurant'
+  | 'food'
   | 'tech_gadgets'
+  | 'gadgets'
   | 'fashion'
   | 'salon_barber'
+  | 'salon'
   | 'repair_shop'
   | 'printing_press'
+  | 'print'
   | 'cafe'
   | 'supermarket'
+  | 'groceries'
+  | 'pharmacy'
   | 'tutoring'
   | 'event_service'
   | 'laundry'
@@ -1085,6 +1117,7 @@ export interface CampusBusiness {
   verificationBadge: boolean;
   rating: number;
   totalReviews: number;
+  reviewCount?: number;
   featuredProducts?: string[]; // Product IDs
   servicesOffered?: string[];
   followersCount: number;
@@ -1142,6 +1175,7 @@ export interface AdCampaign {
   title: string;
   description: string;
   bannerImage: string;
+  imageUrl?: string;
   destinationUrl: string;
   placement: AdPlacement;
   targetUniversityId?: string;
@@ -1226,6 +1260,7 @@ export interface SupportTicket {
   status: SupportStatus;
   assignedTo?: string;
   replies: SupportTicketReply[];
+  messages?: SupportTicketReply[];
   createdAt: string;
   updatedAt: string;
   resolvedAt?: string;
@@ -1269,8 +1304,10 @@ export interface StudyGenMessage {
 export type StudyResourceCategory =
   | 'past_question'
   | 'textbook_resource'
+  | 'textbook'
   | 'lecture_notes'
   | 'course_material'
+  | 'course_materials'
   | 'study_guide'
   | 'solution_guide'
   | 'textbook_summary'

@@ -16,6 +16,7 @@ import {
 
 // Common Components
 import { ToastContainer } from './components/common/ToastContainer';
+import { ErrorBoundary } from './components/common/ErrorBoundary';
 import { Navbar, AppViewMode } from './components/layout/Navbar';
 import { BottomNav } from './components/layout/BottomNav';
 import { Footer } from './components/common/Footer';
@@ -224,7 +225,12 @@ const MainApp: React.FC = () => {
 
       {/* 2. Main Content Router with Mobile-First padding for persistent BottomNav */}
       <main className="flex-1 pb-20 md:pb-0">
-        <AnimatePresence mode="wait">
+        <ErrorBoundary
+          fallbackTitle="Navigation / View Error"
+          fallbackDescription="CampusPlug encountered a rendering issue while loading this view. You can safely retry or return home."
+          onReset={() => setCurrentView('home')}
+        >
+          <AnimatePresence mode="wait">
           {/* HOME VIEW */}
           {currentView === 'home' && (
             <motion.div
@@ -645,6 +651,7 @@ const MainApp: React.FC = () => {
             </motion.div>
           )}
         </AnimatePresence>
+        </ErrorBoundary>
       </main>
 
       {/* 3. Global Footer */}

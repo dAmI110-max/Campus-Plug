@@ -6,6 +6,7 @@ interface EmptyStateProps {
   title?: string;
   description?: string;
   actionText?: string;
+  actionLabel?: string;
   onAction?: () => void;
 }
 
@@ -14,8 +15,10 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   title,
   description,
   actionText,
+  actionLabel,
   onAction,
 }) => {
+  const effectiveActionText = actionText || actionLabel;
   const getDefaults = () => {
     switch (type) {
       case 'favorites':
@@ -25,7 +28,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-rose-600 hover:bg-rose-700 shadow-rose-600/20',
           title: title || 'Your saved items will appear here',
           description: description || 'Tap the heart icon on any product to save it to your favorites list for quick access later.',
-          actionText: actionText || 'Explore Marketplace',
+          actionText: effectiveActionText || 'Explore Marketplace',
         };
       case 'notifications':
         return {
@@ -34,7 +37,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20',
           title: title || "You're all caught up!",
           description: description || 'No new alerts or listing notifications right now.',
-          actionText: actionText || undefined,
+          actionText: effectiveActionText || undefined,
         };
       case 'accommodation':
         return {
@@ -43,7 +46,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-600/20',
           title: title || 'No accommodation listings available yet',
           description: description || 'Try adjusting your campus or room type filters, or be the first student hostel owner to list a room!',
-          actionText: actionText || 'Post Hostel Listing',
+          actionText: effectiveActionText || 'Post Hostel Listing',
         };
       case 'services':
         return {
@@ -52,7 +55,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-purple-600 hover:bg-purple-700 shadow-purple-600/20',
           title: title || 'No student services listed in this category',
           description: description || 'Offer your design, typing, tutorial or repair skills to fellow students and earn income.',
-          actionText: actionText || 'Offer a Service',
+          actionText: effectiveActionText || 'Offer a Service',
         };
       case 'jobs':
         return {
@@ -61,7 +64,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-teal-600 hover:bg-teal-700 shadow-teal-600/20',
           title: title || 'No open campus jobs matching criteria',
           description: description || 'Check back soon for new student gigs, tutoring jobs, or campus vendor vacancies.',
-          actionText: actionText || 'Post a Campus Job',
+          actionText: effectiveActionText || 'Post a Campus Job',
         };
       case 'events':
         return {
@@ -70,7 +73,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-pink-600 hover:bg-pink-700 shadow-pink-600/20',
           title: title || 'No upcoming campus events found',
           description: description || 'Be the first department or club executive to publish an event ticket on CampusPlug.',
-          actionText: actionText || 'Host an Event',
+          actionText: effectiveActionText || 'Host an Event',
         };
       case 'study':
         return {
@@ -79,7 +82,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-cyan-600 hover:bg-cyan-700 shadow-cyan-600/20',
           title: title || 'No academic study files in this category',
           description: description || 'Upload your department past questions or study summaries to help your fellow coursemates.',
-          actionText: actionText || 'Upload Study Material',
+          actionText: effectiveActionText || 'Upload Study Material',
         };
       case 'search':
         return {
@@ -88,7 +91,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20',
           title: title || 'No matching items found',
           description: description || 'We could not find any listings matching your search query or active campus filters. Try broader terms.',
-          actionText: actionText || 'Clear All Filters',
+          actionText: effectiveActionText || 'Clear All Filters',
         };
       case 'reports':
         return {
@@ -97,7 +100,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-slate-900 hover:bg-slate-800 shadow-slate-900/20',
           title: title || 'No active moderation reports',
           description: description || 'The marketplace is clean and in full compliance with safety standards.',
-          actionText: actionText || undefined,
+          actionText: effectiveActionText || undefined,
         };
       case 'products':
       default:
@@ -107,7 +110,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           btnBg: 'bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold shadow-amber-500/20',
           title: title || 'Nothing listed here yet',
           description: description || 'Be the first student to sell something in this category or campus location.',
-          actionText: actionText || 'Start Selling on CampusPlug',
+          actionText: effectiveActionText || 'Start Selling on CampusPlug',
         };
     }
   };
