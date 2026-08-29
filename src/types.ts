@@ -22,6 +22,13 @@ export type SellerStatus = 'NOT_SELLER' | 'SELLER' | 'VERIFIED_SELLER' | 'RESTRI
 export type AccountStatus = 'ACTIVE' | 'SUSPENDED' | 'RESTRICTED' | 'DELETED' | 'active' | 'suspended' | 'pending' | 'banned';
 export type VerificationBadge = 'unverified' | 'verified_student' | 'trusted_seller';
 
+export type AdminRoleType =
+  | 'SUPER_ADMIN'
+  | 'OPERATIONS_ADMIN'
+  | 'MARKETPLACE_ADMIN'
+  | 'STUDY_ADMIN'
+  | 'COMMUNITY_SUPPORT_ADMIN';
+
 export interface AdminPermissions {
   canManageUsers: boolean;
   canSuspendUsers: boolean;
@@ -35,6 +42,9 @@ export interface AdminPermissions {
   canModerateCommunities: boolean;
   canManageSupport: boolean;
   canManageSettings: boolean;
+  canManageStudy?: boolean;
+  canManageAnnouncements?: boolean;
+  canManageHostels?: boolean;
 }
 
 export interface AdminUserRecord {
@@ -43,6 +53,8 @@ export interface AdminUserRecord {
   email: string;
   fullName: string;
   role: 'ADMIN' | 'SUPER_ADMIN';
+  adminRoleType?: AdminRoleType;
+  adminRoleTitle?: string;
   permissions: AdminPermissions;
   assignedBy: string;
   assignedByName?: string;
