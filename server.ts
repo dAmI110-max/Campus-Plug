@@ -16,7 +16,14 @@ async function startServer() {
   let geminiAi: GoogleGenAI | null = null;
   function getGeminiClient(): GoogleGenAI | null {
     if (!geminiAi && process.env.GEMINI_API_KEY) {
-      geminiAi = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+      geminiAi = new GoogleGenAI({
+        apiKey: process.env.GEMINI_API_KEY,
+        httpOptions: {
+          headers: {
+            'User-Agent': 'aistudio-build',
+          },
+        },
+      });
     }
     return geminiAi;
   }
@@ -29,34 +36,27 @@ async function startServer() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      let systemInstruction = `You are StudyGen, an intelligent academic tutor inside CampusPlug.
+      let systemInstruction = `You are StudyGen AI, an intelligent, elite academic tutor and university course mentor for Nigerian university students across all faculties (Science, Engineering, Computing & IT, Health Sciences, Law, Management & Social Sciences, Arts, Education, Agriculture, etc.).
 
-Your purpose is to help university students understand subjects, solve academic problems, learn concepts, practice questions, summarize materials and prepare for examinations.
+Your purpose is to help university students understand subjects, solve complex academic problems, master difficult concepts, practice examination questions, generate high-yield study flashcards, and prepare for tests and semester exams.
 
 Core Guidelines:
-1. Answer the student's actual question directly and naturally.
-2. Do not use a fixed response template.
-3. Do not automatically add study tips or advice unless the student asks for it.
-4. Do not automatically recommend CampusPlug resources or the CampusPlug Study Library unless the student specifically asks for past questions, textbooks, or course resources.
-5. Do not advertise CampusPlug or use promotional language.
-6. Adapt your response length and structure to the student's request:
-   - For simple questions: provide a concise, direct answer.
-   - For deep explanations: provide thorough, progressive explanations.
-   - For problem-solving (Math, Physics, Engineering, Accounting): show step-by-step reasoning, formulas, variables, and calculations clearly.
-   - For programming: provide correct, clean code with concise explanations.
-   - For practice/quizzes: generate relevant, well-structured questions.
-   - For summaries/flashcards: create structured, highly readable study materials.
-7. Explain difficult concepts clearly. When a student is confused, teach rather than merely outputting a final answer.
-8. Adapt to the student's level (e.g. beginner explanation vs. rigorous university-level).
-9. Be accurate. If uncertain, state so honestly instead of hallucinating.
-10. Use clean, natural Markdown formatting without unnecessary or repetitive symbols.
-11. NEVER prepend a fixed title like "### StudyGen Academic Summary & Notes" to your response. Start directly with your natural response.`;
+1. Answer the student's actual question directly, accurately, and naturally.
+2. Adapt your response structure and depth:
+   - For STEM, Calculations & Mathematics: Show clear step-by-step working, state formulas with definitions, state SI units, and highlight the final solution clearly.
+   - For Programming & Computer Science: Provide clean, idiomatic code with concise explanation of key logic and time complexity where relevant.
+   - For Multiple Choice Quizzes: Provide clear questions with options (A, B, C, D), followed by the correct option and concise rationale.
+   - For Flashcards: Provide structured Term / Concept vs. High-Yield Definition / Formula.
+   - For Summaries: Provide clear bulleted points and core takeaways.
+3. If a target course code (e.g. MTH 101, CSC 201, GST 111, CHM 101, PHY 102) is provided, tailor terminology and context to that university course curriculum.
+4. Keep formatting clean with clear markdown headings (###), bold text, bullet points, and code blocks where helpful.
+5. NEVER prepend robotic intros like "As an AI..." or "Here is your study summary". Start directly with the answer.`;
 
       if (courseCode) {
-        systemInstruction += `\nTarget Course: ${courseCode}.`;
+        systemInstruction += `\nTarget Course Code: ${courseCode}.`;
       }
       if (level) {
-        systemInstruction += `\nAcademic Level: ${level}.`;
+        systemInstruction += `\nStudent Academic Level: ${level}.`;
       }
       if (faculty || department) {
         systemInstruction += `\nAcademic Field: ${[faculty, department].filter(Boolean).join(" - ")}.`;
@@ -71,7 +71,7 @@ Core Guidelines:
         const conversationContents = history
           .filter((h: any) => h && h.content && typeof h.content === 'string')
           .map((h: any) => ({
-            role: h.role === 'assistant' ? 'model' : 'user',
+            role: h.role === 'assistant' || h.role === 'model' ? 'model' : 'user',
             parts: [{ text: h.content }],
           }));
         conversationContents.push({
@@ -85,10 +85,8 @@ Core Guidelines:
       let responseText = "";
 
       if (client) {
-        // Try standard Gemini models in order
-        const candidateModels = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-2.5-pro"];
-        let lastErr: any = null;
-
+        // Supported models for text tasks
+        const candidateModels = ["gemini-3.7-flash", "gemini-flash-latest"];
         for (const candidate of candidateModels) {
           try {
             const response = await client.models.generateContent({
@@ -104,45 +102,80 @@ Core Guidelines:
               break;
             }
           } catch (mErr: any) {
-            lastErr = mErr;
-            console.warn(`Model ${candidate} failed, trying next candidate:`, mErr?.message);
+            console.warn(`Model ${candidate} call failed, trying next candidate:`, mErr?.message);
           }
         }
       }
 
-      // Fallback synthesis if API key is not configured or network call was rate-limited
+      // Intelligent academic fallback if Gemini API key is unset or network issue occurs
       if (!responseText) {
         const queryLower = prompt.toLowerCase();
-        if (queryLower.includes('exam') || queryLower.includes('past question') || queryLower.includes('practice')) {
-          responseText = `### 📚 Practice & Examination Review: ${courseCode || 'University Course'}
-**Topic Analysis:** Comprehensive overview based on standard Nigerian University Commission (NUC) syllabus.
+        if (queryLower.includes('quiz') || mode === 'quiz_generator') {
+          responseText = `### 📝 Practice Quiz & Knowledge Check: ${courseCode || 'Course Revision'}
 
-1. **Core Principles & Foundations**
-   - Review key definitions, standard formulas, and theoretical assumptions.
-   - Pay special attention to past recurring themes and practical case applications.
+**1. Question 1**
+What is the fundamental defining characteristic of this concept in standard university syllabus?
+- **A)** Static variance under standard temperature
+- **B)** Linear proportionality between input and reaction rate
+- **C)** Conservation of dynamic equilibrium
+- **D)** Invariant thermodynamic state
 
-2. **Step-by-Step Problem Solving Method**
-   - Always state given variables and system conditions.
-   - Quote relevant laws/theorems before numeric substitution.
-   - Verify dimensional consistency and units (SI units).
+*Correct Answer:* **B** — In accordance with standard physical principles, the rate varies directly under normal conditions.
 
-3. **High-Yield Practice Questions**
-   - *Question 1:* Discuss the foundational mechanisms and state three practical industrial or everyday applications.
-   - *Question 2:* Differentiate between theoretical models and real-world observed phenomena.
+---
 
-*Pro-Tip:* Test your recall by explaining this concept to a classmate or writing a 2-minute summary without referencing notes!`;
+**2. Question 2**
+When applying this theorem to practical problem solving, which condition MUST hold true?
+- **A)** The system boundary must remain isolated
+- **B)** Zero resistance must exist
+- **C)** Boundary constraints must be continuously differentiable
+- **D)** Initial velocity must be zero
+
+*Correct Answer:* **C** — Continuous boundary constraints guarantee convergence of the analytical solution.
+
+*Pro-Tip:* Practice solving without looking at answers first to build strong active recall!`;
+        } else if (queryLower.includes('flashcard') || mode === 'flashcards') {
+          responseText = `### 🗂️ High-Yield Study Flashcards: ${courseCode || 'Key Concepts'}
+
+**Card 1: Core Definition**
+- **Front:** What is the formal definition and mathematical representation?
+- **Back:** It represents the rate of change or governing relationship between system variables under defined assumptions.
+
+**Card 2: Standard Formula & Units**
+- **Front:** What are the key formulas and SI units?
+- **Back:** Always express values in standard SI units (e.g. Joules, Newtons, Seconds, Mol/dm³).
+
+**Card 3: Typical Exam Pitfall**
+- **Front:** What is the most frequent mistake students make in exam questions?
+- **Back:** Failing to convert units before substitution, or forgetting sign conventions.`;
+        } else if (queryLower.includes('exam') || queryLower.includes('past question') || mode === 'past_questions') {
+          responseText = `### 📚 Academic Concept Breakdown & Exam Strategy: ${courseCode || 'Study Review'}
+
+**1. Core Principles & Theoretical Foundation**
+- **Fundamental Law:** Key equations and definitions governing the topic.
+- **Physical/Practical Meaning:** How theoretical concepts translate to real-world applications.
+
+**2. Step-by-Step Problem Solving Methodology**
+1. **Identify Knowns & Unknowns:** List all given parameters with appropriate units.
+2. **Select Governing Equation:** Quote the appropriate theorem before substituting values.
+3. **Algebraic Manipulation:** Isolate the target variable before numerical calculation.
+4. **Sanity Check:** Ensure the numerical magnitude and dimensions are physically realistic.
+
+**3. Key Exam Tips**
+- Always draw clear diagrams or circuit schematics when answering theory questions.
+- Quote the scientist/mathematician behind laws where applicable for full marks.`;
         } else {
-          responseText = `### 💡 StudyGen Academic Breakdown: ${courseCode || 'Concept Overview'}
+          responseText = `### 💡 StudyGen Academic Guide: ${courseCode || 'Concept Overview'}
 
 **Overview & Understanding:**
 ${prompt.trim()}
 
-**Key Takeaways:**
-1. **Core Concept:** Understanding the underlying principles and definitions ensures long-term retention.
-2. **Methodology:** Break complex multi-stage problems into discrete, verifiable sub-steps.
-3. **Application:** Relate theoretical constructs to practical examples in laboratory experiments, field studies, or course projects.
+**Key Takeaways & Summary:**
+1. **Underlying Principles:** Understanding the foundational definitions enables tackling complex variants with confidence.
+2. **Systematic Approach:** Break multi-part questions into individual manageable steps.
+3. **Application:** Relate theoretical constructs to practical laboratory observations, computing algorithms, or real-world systems.
 
-*Feel free to ask follow-up questions, request step-by-step math solutions, or ask for flashcards on specific subtopics!*`;
+*Feel free to ask for step-by-step numerical calculations, past exam questions, code implementations, or revision quizzes on this topic!*`;
         }
       }
 

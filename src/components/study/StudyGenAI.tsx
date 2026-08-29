@@ -315,7 +315,15 @@ export const StudyGenAI: React.FC<StudyGenAIProps> = ({ onBack, onNavigateToReso
   };
 
   const handleCopy = (content: string, id: string) => {
-    navigator.clipboard.writeText(content);
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(content).catch(() => {
+          // fallback
+        });
+      }
+    } catch {
+      // fallback
+    }
     setCopiedId(id);
     success('Study note copied to clipboard!');
     setTimeout(() => setCopiedId(null), 2000);

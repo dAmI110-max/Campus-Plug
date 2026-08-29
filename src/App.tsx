@@ -608,6 +608,7 @@ const MainApp: React.FC = () => {
                 onOpenCreateAccommodation={handleOpenCreateAccommodation}
                 onProductClick={(p) => openModal('product_detail', { product: p })}
                 onFavoriteToggle={() => setRefreshKey((k) => k + 1)}
+                onNavigateToOrders={() => setCurrentView('orders')}
                 onExploreMarketplace={() => {
                   handleResetProductFilters();
                   setCurrentView('marketplace');
@@ -700,10 +701,6 @@ const MainApp: React.FC = () => {
           onOrderCreated={(order) => {
             closeModal();
             setCurrentView('orders');
-          }}
-          onNavigateToWallet={() => {
-            closeModal();
-            setCurrentView('wallet');
           }}
         />
       )}
@@ -856,14 +853,16 @@ const MainApp: React.FC = () => {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <ModalProvider>
-            <MainApp />
-          </ModalProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </ThemeProvider>
+    <ErrorBoundary fallbackTitle="CampusPlug is loading..." fallbackDescription="If you are on an iPhone or Safari browser, tap Reload Page below to refresh your session.">
+      <ThemeProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <ModalProvider>
+              <MainApp />
+            </ModalProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

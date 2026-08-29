@@ -24,6 +24,7 @@ interface UserDashboardProps {
   onProductClick: (product: Product) => void;
   onFavoriteToggle: (productId: string) => void;
   onExploreMarketplace: () => void;
+  onNavigateToOrders?: () => void;
 }
 
 type DashboardTab = 'overview' | 'listings' | 'favorites' | 'profile';
@@ -34,6 +35,7 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
   onProductClick,
   onFavoriteToggle,
   onExploreMarketplace,
+  onNavigateToOrders,
 }) => {
   const { currentUser } = useAuth();
   const [currentTab, setCurrentTab] = useState<DashboardTab>('overview');
@@ -45,6 +47,8 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
     return null;
   }
 
+  const userWallet = StorageService.getWallet(currentUser.id);
+  const pendingEscrow = userWallet?.pendingBalance || 0;
   const myListings = StorageService.getProductsBySeller(currentUser.id);
   const favoriteIds = StorageService.getFavorites(currentUser.id);
   const allProducts = StorageService.getProducts();
@@ -121,11 +125,11 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
             <div className="text-xl font-black text-white mt-1">{soldCount}</div>
           </div>
 
-          <div className="bg-white/5 rounded-2xl p-3.5 backdrop-blur-xs">
-            <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
-              <Eye className="w-3.5 h-3.5 text-sky-400" /> Total Views
+          <div className="bg-amber-500/10 border border-amber-400/20 rounded-2xl p-3.5 backdrop-blur-xs">
+            <div className="text-xs text-amber-300 font-medium flex items-center gap-1">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Escrow Balance
             </div>
-            <div className="text-xl font-black text-white mt-1">{totalViews}</div>
+            <div className="text-xl font-black text-amber-200 mt-1">₦{pendingEscrow.toLocaleString()}</div>
           </div>
 
           <div className="bg-white/5 rounded-2xl p-3.5 backdrop-blur-xs">
@@ -268,21 +272,50 @@ export const UserDashboard: React.FC<UserDashboardProps> = ({
                 )}
               </div>
 
-              {/* Right Col: Campus Safety & Tips */}
+              {/* Right Col: Escrow Balance & Campus Safety */}
               <div className="space-y-4">
-                <h3 className="text-base font-bold text-slate-900">Student Safety Tips</h3>
-                <div className="bg-emerald-50/70 rounded-3xl p-5 border border-emerald-100 space-y-3 text-xs text-emerald-950">
-                  <div className="flex items-center gap-2 font-bold text-emerald-800">
-                    <ShieldCheck className="w-5 h-5 text-emerald-600" />
+                {/* Escrow Balance Card */}
+                <div className="bg-amber-50/90 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-900/50 rounded-3xl p-5 shadow-xs space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-bold text-amber-900 dark:text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                      Campus Escrow Balance
+                    </span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 bg-amber-200/80 dark:bg-amber-900/50 text-amber-900 dark:text-amber-200 rounded-full">
+                      Protected
+                    </span>
+                  </div>
+                  <div>
+                    <div className="text-2xl font-black text-amber-950 dark:text-amber-100">
+                      ₦{pendingEscrow.toLocaleString()}
+                    </div>
+                    <p className="text-[11px] text-amber-800/90 dark:text-amber-300/80 mt-1">
+                      Held securely in UNIOSUN Escrow. Funds are released automatically once order meetup and inspection are confirmed.
+                    </p>
+                  </div>
+                  {onNavigateToOrders && (
+                    <button
+                      onClick={onNavigateToOrders}
+                      className="w-full py-2 px-3 rounded-xl bg-amber-600 hover:bg-amber-700 text-white text-xs font-bold transition-colors text-center cursor-pointer shadow-xs"
+                    >
+                      Track Escrow Orders &rarr;
+                    </button>
+                  )}
+                </div>
+
+                {/* Campus Safety Tips */}
+                <div className="bg-emerald-50/70 dark:bg-emerald-950/20 rounded-3xl p-5 border border-emerald-100 dark:border-emerald-900/40 space-y-3 text-xs text-emerald-950 dark:text-emerald-200">
+                  <div className="flex items-center gap-2 font-bold text-emerald-800 dark:text-emerald-300">
+                    <ShieldCheck className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                     Ace Tech Safe Exchange Rules
                   </div>
-                  <ul className="space-y-2 text-emerald-900/80 text-[11px] list-disc list-inside">
+                  <ul className="space-y-2 text-emerald-900/80 dark:text-emerald-300/80 text-[11px] list-disc list-inside">
                     <li>Always meet in public campus zones (SUB, Cafeteria, Campus Gate).</li>
                     <li>Inspect all gadgets thoroughly before transferring payment.</li>
                     <li>CampusPlug will never ask for your account password or BVN.</li>
                     <li>Report suspicious accounts or scam attempts immediately to support.</li>
                   </ul>
-                  <div className="pt-2 text-[10px] text-emerald-800/80 font-medium">
+                  <div className="pt-2 text-[10px] text-emerald-800/80 dark:text-emerald-400/80 font-medium">
                     Need support? Email <strong>cplugsupport@gmail.com</strong>
                   </div>
                 </div>

@@ -89,27 +89,27 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/70 backdrop-blur-xs overflow-y-auto">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
-          className="bg-white rounded-3xl max-w-xl w-full p-5 sm:p-7 shadow-2xl border border-slate-100 relative my-6 max-h-[92vh] flex flex-col overflow-hidden"
+          className="bg-white dark:bg-slate-900 rounded-3xl max-w-xl w-full p-5 sm:p-7 shadow-2xl border border-slate-200 dark:border-slate-800 relative my-6 max-h-[92vh] flex flex-col overflow-hidden text-slate-900 dark:text-slate-100"
         >
-          <div className="flex items-center justify-between pb-4 border-b border-slate-100 shrink-0">
+          <div className="flex items-center justify-between pb-4 border-b border-slate-200 dark:border-slate-800 shrink-0">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-slate-100 text-slate-700 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-2xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 flex items-center justify-center">
                 <Edit3 className="w-5 h-5" />
               </div>
               <div>
-                <h2 className="text-lg font-bold text-slate-900">Edit Product Listing</h2>
-                <p className="text-xs text-slate-500 truncate max-w-xs">{product.title}</p>
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">Edit Product Listing</h2>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-xs">{product.title}</p>
               </div>
             </div>
 
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100"
+              className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -117,78 +117,78 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
 
           <form onSubmit={handleSubmit} className="overflow-y-auto pr-1 py-4 space-y-4 flex-1">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Product Title *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Product Title *</label>
               <input
                 type="text"
                 required
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-emerald-500"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Price (₦) *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Price (₦) *</label>
                 <input
                   type="number"
                   required
                   min="0"
                   value={price}
                   onChange={(e) => setPrice(e.target.value ? Number(e.target.value) : '')}
-                  className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold focus:outline-hidden focus:border-emerald-500"
+                  className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Condition *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Condition *</label>
                 <select
                   value={condition}
                   onChange={(e) => setCondition(e.target.value as ProductCondition)}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-medium focus:outline-hidden focus:border-emerald-500"
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-medium text-slate-900 dark:text-white focus:outline-none focus:border-emerald-500 transition-colors"
                 >
-                  <option value="New">New</option>
-                  <option value="Like New">Like New</option>
-                  <option value="Used">Used</option>
-                  <option value="Fair">Fair</option>
-                  <option value="Refurbished">Refurbished</option>
+                  <option value="New" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">New</option>
+                  <option value="Like New" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Like New</option>
+                  <option value="Used" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Used</option>
+                  <option value="Fair" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Fair</option>
+                  <option value="Refurbished" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Refurbished</option>
                 </select>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">Listing Status *</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Listing Status *</label>
                 <select
                   value={status}
                   onChange={(e) => setStatus(e.target.value as ProductStatus)}
-                  className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs sm:text-sm font-semibold text-emerald-700 focus:outline-hidden focus:border-emerald-500"
+                  className="w-full px-3 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400 focus:outline-none focus:border-emerald-500 transition-colors"
                 >
-                  <option value="active">Active (Visible)</option>
-                  <option value="paused">Paused (Hidden)</option>
-                  <option value="sold">Sold Out</option>
+                  <option value="active" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Active (Visible)</option>
+                  <option value="paused" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Paused (Hidden)</option>
+                  <option value="sold" className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white">Sold Out</option>
                 </select>
               </div>
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Pickup Location</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Pickup Location</label>
               <input
                 type="text"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-emerald-500"
+                className="w-full px-3.5 py-2 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Product Images</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Product Images</label>
               <div className="flex flex-wrap gap-2 mb-2">
                 {images.map((url, idx) => (
-                  <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-200 group">
+                  <div key={idx} className="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-700 group">
                     <img src={url} alt="Product" className="w-full h-full object-cover" />
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1 right-1 p-0.5 bg-rose-600 text-white rounded-full"
+                      className="absolute top-1 right-1 p-0.5 bg-rose-600 text-white rounded-full cursor-pointer"
                     >
                       <Trash2 className="w-3 h-3" />
                     </button>
@@ -201,12 +201,12 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
                   value={newImageUrl}
                   onChange={(e) => setNewImageUrl(e.target.value)}
                   placeholder="Paste direct Image URL..."
-                  className="flex-1 px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-xl text-xs"
+                  className="flex-1 px-3 py-1.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddImage}
-                  className="px-3 py-1.5 bg-slate-800 text-white rounded-xl text-xs font-semibold flex items-center gap-1"
+                  className="px-3 py-1.5 bg-slate-800 dark:bg-slate-700 text-white rounded-xl text-xs font-semibold flex items-center gap-1 cursor-pointer hover:bg-slate-900 dark:hover:bg-slate-600"
                 >
                   <Plus className="w-3.5 h-3.5" /> Add
                 </button>
@@ -214,28 +214,28 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">Description *</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Description *</label>
               <textarea
                 rows={4}
                 required
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-hidden focus:border-emerald-500 resize-none"
+                className="w-full px-3.5 py-2.5 bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 resize-none transition-colors"
               />
             </div>
 
-            <div className="pt-3 border-t border-slate-100 flex items-center justify-end gap-3">
+            <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-end gap-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-800 rounded-xl"
+                className="px-4 py-2.5 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 rounded-xl cursor-pointer"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-98 disabled:opacity-50 flex items-center gap-1.5"
+                className="px-6 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs sm:text-sm rounded-xl transition-all shadow-md shadow-emerald-600/20 active:scale-98 disabled:opacity-50 flex items-center gap-1.5 cursor-pointer"
               >
                 <Save className="w-4 h-4" />
                 {isSubmitting ? 'Saving Changes...' : 'Save Changes'}

@@ -96,7 +96,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
       const res = StorageService.confirmOrderReceivedAndReleaseEscrow(order.id, currentUser.id);
       setIsProcessing(false);
       if (res.success) {
-        success(`Payment of ₦${order.sellerReceives.toLocaleString()} released to ${order.sellerName}'s wallet!`);
+        success(`Order completed! You have confirmed satisfactory receipt of the item from ${order.sellerName}.`);
         setShowConfirmReleaseModal(null);
         if (onOpenReviewModal) {
           onOpenReviewModal(order);
@@ -137,35 +137,35 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
     switch (status) {
       case 'seller_processing':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800 border border-amber-200">
-            <Clock className="w-3.5 h-3.5 text-amber-600 animate-spin" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-100 dark:bg-amber-950/60 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+            <Clock className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400 animate-spin" />
             Seller Processing & Meetup
           </span>
         );
       case 'delivered':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border border-blue-200">
-            <Truck className="w-3.5 h-3.5 text-blue-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-blue-100 dark:bg-blue-950/60 text-blue-800 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+            <Truck className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
             Delivered (Awaiting Buyer Confirmation)
           </span>
         );
       case 'completed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800 border border-emerald-200">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-            Completed & Funds Released
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            Completed & Order Confirmed
           </span>
         );
       case 'disputed':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800 border border-rose-200">
-            <AlertTriangle className="w-3.5 h-3.5 text-rose-600" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
+            <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             Under Dispute Review
           </span>
         );
       case 'cancelled':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 text-slate-700 border border-slate-200">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
             <XCircle className="w-3.5 h-3.5 text-slate-500" />
             Cancelled / Refunded
           </span>
@@ -176,62 +176,62 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 space-y-6">
+    <div className="max-w-6xl mx-auto py-6 px-4 sm:px-6 space-y-6 text-slate-900 dark:text-slate-100">
       {/* Top Back Navigation Bar */}
       {onBack && (
         <div className="flex items-center gap-2">
           <button
             onClick={onBack}
-            className="px-3.5 py-1.5 rounded-xl bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
+            className="px-3.5 py-1.5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-bold transition-all flex items-center gap-1.5 shadow-2xs cursor-pointer"
           >
             <ArrowLeft className="w-4 h-4 text-slate-500" />
             <span>Back</span>
           </button>
-          <span className="text-xs text-slate-400">/ Orders & Escrow</span>
+          <span className="text-xs text-slate-400">/ Orders & Safe Meetup</span>
         </div>
       )}
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <div className="flex items-center gap-2 text-indigo-600 text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="flex items-center gap-2 text-indigo-600 dark:text-indigo-400 text-xs font-bold uppercase tracking-wider mb-1">
             <ShieldCheck className="w-4 h-4" />
-            Secure Campus Escrow Protocol
+            Secure Campus Safe Order Protocol
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">Campus Orders & Escrow</h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
-            Your money is locked safely until you inspect the item in person and confirm delivery.
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">Campus Orders & Inspection</h1>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">
+            Orders are tracked safely so you inspect the item in person before confirming delivery.
           </p>
         </div>
 
         {/* Tab Switcher */}
-        <div className="flex items-center bg-slate-100 p-1.5 rounded-2xl self-start sm:self-auto">
+        <div className="flex items-center bg-slate-100 dark:bg-slate-800 p-1.5 rounded-2xl self-start sm:self-auto border border-slate-200 dark:border-slate-700">
           <button
             onClick={() => setActiveTab('buyer')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'buyer'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             My Purchases ({StorageService.getOrders(currentUser.id, 'buyer').length})
           </button>
           <button
             onClick={() => setActiveTab('seller')}
-            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'seller'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             My Sales ({StorageService.getOrders(currentUser.id, 'seller').length})
           </button>
           <button
             onClick={() => setActiveTab('all')}
-            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
+            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               activeTab === 'all'
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-600 hover:text-slate-900'
+                ? 'bg-white dark:bg-slate-900 text-slate-900 dark:text-white shadow-xs'
+                : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             All
@@ -240,25 +240,25 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
       </div>
 
       {/* Escrow Guarantee Banner */}
-      <div className="bg-indigo-50/80 border border-indigo-200/80 rounded-3xl p-4 sm:p-5 mb-8 flex items-start gap-3 text-xs text-indigo-950">
+      <div className="bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-200/80 dark:border-indigo-900/50 rounded-3xl p-4 sm:p-5 mb-8 flex items-start gap-3 text-xs text-indigo-950 dark:text-indigo-200">
         <div className="w-8 h-8 rounded-2xl bg-indigo-600 text-white flex items-center justify-center shrink-0">
           <ShieldCheck className="w-4 h-4" />
         </div>
         <div>
-          <span className="font-extrabold block text-sm mb-0.5">How CampusPlug Escrow Protects You:</span>
-          <span>
-            When an order is created, the payment is held in the neutral CampusPlug vault. The seller only receives the payout when the buyer confirms they received and inspected the item. If the item is damaged or never delivered, the buyer receives a 100% refund.
+          <span className="font-extrabold block text-sm mb-0.5">How CampusPlug Safe Orders Protect You:</span>
+          <span className="leading-relaxed">
+            When an order is created, meetup locations and order details are registered. Meet in safe, verified campus spots to inspect the product, test functions, and confirm the transaction directly with fellow verified students.
           </span>
         </div>
       </div>
 
       {/* Orders List */}
       {orders.length === 0 ? (
-        <div className="text-center py-16 bg-white border border-slate-200 rounded-3xl">
-          <Package className="w-12 h-12 text-slate-300 mx-auto mb-3" />
-          <h3 className="font-extrabold text-base text-slate-800">No {activeTab} orders found</h3>
-          <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-            Browse the UNIOSUN marketplace to discover textbook deals, electronics, and fashion with Escrow protection.
+        <div className="text-center py-16 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl">
+          <Package className="w-12 h-12 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <h3 className="font-extrabold text-base text-slate-800 dark:text-slate-200">No {activeTab} orders found</h3>
+          <p className="text-xs text-slate-500 dark:text-slate-400 max-w-sm mx-auto mt-1">
+            Browse the UNIOSUN marketplace to discover textbook deals, electronics, and student essentials.
           </p>
         </div>
       ) : (
@@ -270,12 +270,12 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
             return (
               <div
                 key={order.id}
-                className="bg-white border border-slate-200 rounded-3xl p-5 sm:p-6 shadow-sm hover:border-indigo-200 transition-all flex flex-col gap-4"
+                className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-5 sm:p-6 shadow-sm hover:border-indigo-200 dark:hover:border-indigo-800 transition-all flex flex-col gap-4"
               >
                 {/* Order Top Bar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-3">
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div className="flex items-center gap-3">
-                    <span className="font-mono font-bold text-xs text-slate-900 bg-slate-100 px-2.5 py-1 rounded-lg">
+                    <span className="font-mono font-bold text-xs text-slate-900 dark:text-slate-100 bg-slate-100 dark:bg-slate-800 px-2.5 py-1 rounded-lg">
                       #{order.orderNumber}
                     </span>
                     <span className="text-xs text-slate-400">
@@ -297,62 +297,57 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                     <img
                       src={order.productImage}
                       alt={order.productTitle}
-                      className="w-20 h-20 rounded-2xl object-cover border border-slate-100 shadow-sm shrink-0"
+                      className="w-20 h-20 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm shrink-0"
                     />
                     <div>
-                      <h3 className="font-extrabold text-sm sm:text-base text-slate-900 line-clamp-1">
+                      <h3 className="font-extrabold text-sm sm:text-base text-slate-900 dark:text-white line-clamp-1">
                         {order.productTitle}
                       </h3>
-                      <div className="flex items-center gap-2 text-xs text-slate-600 mt-1">
-                        <span className="font-extrabold text-slate-900 text-sm">
+                      <div className="flex items-center gap-2 text-xs text-slate-600 dark:text-slate-300 mt-1">
+                        <span className="font-extrabold text-slate-900 dark:text-white text-sm">
                           ₦{order.amount.toLocaleString()}
                         </span>
                         <span>&bull;</span>
-                        <span className="flex items-center gap-1 text-slate-500">
+                        <span className="flex items-center gap-1 text-slate-500 dark:text-slate-400">
                           <MapPin className="w-3.5 h-3.5 text-indigo-500" />
                           {order.deliveryCampus} ({order.deliveryLocation})
                         </span>
                       </div>
 
-                      <div className="text-[11px] text-slate-500 mt-1 flex items-center gap-2">
+                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
                         <span>{isBuyer ? `Seller: ${order.sellerName}` : `Buyer: ${order.buyerName}`}</span>
                         <span>&bull;</span>
-                        <span className="text-emerald-600 font-semibold flex items-center gap-1">
+                        <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
                           <Lock className="w-3 h-3" />
-                          Escrow: {(order.escrowStatus || 'HELD').toUpperCase()}
+                          Status: {(order.escrowStatus || 'ORDER PLACED').toUpperCase()}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  {/* Financial Breakdown / Payout */}
-                  <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-right sm:min-w-[170px] self-stretch sm:self-auto flex flex-col justify-center">
+                  {/* Order Value */}
+                  <div className="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-2xl border border-slate-200 dark:border-slate-700 text-right sm:min-w-[170px] self-stretch sm:self-auto flex flex-col justify-center">
                     <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">
-                      {isSeller ? 'Your Net Payout' : 'Total Escrow Held'}
+                      {isSeller ? 'Item Price' : 'Order Amount'}
                     </span>
-                    <div className="text-lg font-black text-slate-900 mt-0.5">
-                      ₦{(isSeller ? order.sellerReceives : order.amount).toLocaleString()}
+                    <div className="text-lg font-black text-slate-900 dark:text-white mt-0.5">
+                      ₦{order.amount.toLocaleString()}
                     </div>
-                    {isSeller && (
-                      <span className="text-[10px] text-slate-400">
-                        (₦{order.platformFee} Platform fee deducted)
-                      </span>
-                    )}
                   </div>
                 </div>
 
                 {/* Progress / Step Tracker */}
-                <div className="bg-slate-50/70 p-3 rounded-2xl border border-slate-100 text-xs">
-                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 mb-2">
-                    <span className={order.status !== 'cancelled' ? 'text-indigo-600' : ''}>1. Escrow Funded</span>
-                    <span className={order.status === 'delivered' || order.status === 'completed' ? 'text-indigo-600' : ''}>
-                      2. Item Meetup / Dispatched
+                <div className="bg-slate-50/70 dark:bg-slate-800/50 p-3 rounded-2xl border border-slate-200 dark:border-slate-800 text-xs">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-2">
+                    <span className={order.status !== 'cancelled' ? 'text-indigo-600 dark:text-indigo-400' : ''}>1. Order Placed</span>
+                    <span className={order.status === 'delivered' || order.status === 'completed' ? 'text-indigo-600 dark:text-indigo-400' : ''}>
+                      2. Campus Meetup & Inspection
                     </span>
-                    <span className={order.status === 'completed' ? 'text-emerald-600' : ''}>
-                      3. Buyer Inspected & Released
+                    <span className={order.status === 'completed' ? 'text-emerald-600 dark:text-emerald-400' : ''}>
+                      3. Confirmed & Complete
                     </span>
                   </div>
-                  <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden flex">
+                  <div className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden flex">
                     <div
                       className={`h-full bg-indigo-600 transition-all ${
                         order.status === 'seller_processing'
@@ -368,21 +363,21 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                 </div>
 
                 {/* Order Action Buttons */}
-                <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-100">
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-slate-200 dark:border-slate-800">
                   <div className="flex items-center gap-2">
                     {/* Chat with other party */}
-                    {onOpenChatWithUser && (
+                    {effectiveOpenChat && (
                       <button
                         onClick={() =>
-                          onOpenChatWithUser(
+                          effectiveOpenChat(
                             isBuyer ? order.sellerId : order.buyerId,
                             order.id,
                             order.productId
                           )
                         }
-                        className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center gap-1.5 transition-colors"
+                        className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
-                        <MessageCircle className="w-4 h-4 text-indigo-600" />
+                        <MessageCircle className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
                         Chat with {isBuyer ? 'Seller' : 'Buyer'}
                       </button>
                     )}
@@ -391,7 +386,7 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                     {order.status !== 'completed' && order.status !== 'cancelled' && order.status !== 'disputed' && (
                       <button
                         onClick={() => setShowDisputeModal(order)}
-                        className="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition-colors flex items-center gap-1"
+                        className="px-3 py-2 rounded-xl text-xs font-bold text-slate-500 dark:text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition-colors flex items-center gap-1 cursor-pointer"
                       >
                         <AlertTriangle className="w-3.5 h-3.5" />
                         Report Issue
@@ -405,29 +400,29 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                     {isSeller && order.status === 'seller_processing' && (
                       <button
                         onClick={() => setShowMarkDeliveredModal(order)}
-                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 transition-all"
+                        className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/20 flex items-center gap-1.5 transition-all cursor-pointer"
                       >
                         <Truck className="w-4 h-4" />
-                        Mark as Delivered / Ready
+                        Mark as Handed Over / Ready
                       </button>
                     )}
 
-                    {/* Buyer: Confirm Receipt & Release Escrow */}
+                    {/* Buyer: Confirm Receipt */}
                     {isBuyer && (order.status === 'delivered' || order.status === 'seller_processing') && (
                       <button
                         onClick={() => setShowConfirmReleaseModal(order)}
-                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all"
+                        className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-1.5 transition-all cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4" />
-                        Confirm Receipt & Release ₦{order.sellerReceives.toLocaleString()}
+                        Confirm Satisfactory Receipt
                       </button>
                     )}
 
                     {/* Review Button for completed order */}
-                    {order.status === 'completed' && onOpenReviewModal && (
+                    {order.status === 'completed' && effectiveOpenReview && (
                       <button
-                        onClick={() => onOpenReviewModal(order)}
-                        className="px-4 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200 font-bold text-xs flex items-center gap-1.5 transition-colors"
+                        onClick={() => effectiveOpenReview(order)}
+                        className="px-4 py-2 rounded-xl bg-amber-50 dark:bg-amber-950/50 hover:bg-amber-100 dark:hover:bg-amber-900/50 text-amber-900 dark:text-amber-200 border border-amber-200 dark:border-amber-800 font-bold text-xs flex items-center gap-1.5 transition-colors cursor-pointer"
                       >
                         <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
                         Rate Experience
@@ -441,48 +436,48 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
         </div>
       )}
 
-      {/* --- MODAL: CONFIRM RECEIPT & RELEASE ESCROW --- */}
+      {/* --- MODAL: CONFIRM RECEIPT --- */}
       <AnimatePresence>
         {showConfirmReleaseModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-900 dark:text-slate-100"
             >
-              <div className="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto mb-3">
+              <div className="w-12 h-12 rounded-2xl bg-emerald-100 dark:bg-emerald-950/70 text-emerald-700 dark:text-emerald-300 flex items-center justify-center mx-auto mb-3">
                 <CheckCircle2 className="w-6 h-6" />
               </div>
 
-              <h3 className="text-lg font-black text-center text-slate-900 mb-1">
-                Release Escrow to {showConfirmReleaseModal.sellerName}?
+              <h3 className="text-lg font-black text-center text-slate-900 dark:text-white mb-1">
+                Confirm Receipt from {showConfirmReleaseModal.sellerName}?
               </h3>
-              <p className="text-xs text-center text-slate-500 mb-4">
-                Please ensure you have thoroughly inspected "{showConfirmReleaseModal.productTitle}" in person. Once released, the payment of ₦{showConfirmReleaseModal.sellerReceives.toLocaleString()} is immediately credited to the seller's wallet.
+              <p className="text-xs text-center text-slate-500 dark:text-slate-400 mb-4">
+                Please ensure you have inspected "{showConfirmReleaseModal.productTitle}" in person and tested it properly.
               </p>
 
-              <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200 text-xs text-amber-900 mb-5 flex items-start gap-2">
+              <div className="p-3 bg-amber-50 dark:bg-amber-950/50 rounded-2xl border border-amber-200 dark:border-amber-800 text-xs text-amber-900 dark:text-amber-200 mb-5 flex items-start gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Safety Notice:</strong> Only confirm if the product meets your satisfaction. Do not confirm if you haven't received the item.
+                  <strong>Safety Notice:</strong> Only confirm if the product meets your satisfaction. Do not confirm if you have not met the seller.
                 </span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <button
                   onClick={() => setShowConfirmReleaseModal(null)}
-                  className="py-2.5 rounded-xl border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50"
+                  className="py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={() => handleReleaseEscrow(showConfirmReleaseModal)}
                   disabled={isProcessing}
-                  className="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/30 flex items-center justify-center gap-1.5"
+                  className="py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/30 flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                  Release Funds Now
+                  Confirm Received
                 </button>
               </div>
             </motion.div>
@@ -493,26 +488,26 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
       {/* --- MODAL: MARK DELIVERED --- */}
       <AnimatePresence>
         {showMarkDeliveredModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-900 dark:text-slate-100"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-indigo-100 dark:bg-indigo-950/70 text-indigo-700 dark:text-indigo-300 flex items-center justify-center font-bold">
                     <Truck className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-base text-slate-900">Mark Order Delivered</h3>
-                    <p className="text-xs text-slate-500">Notify buyer to inspect item</p>
+                    <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Mark Order Handed Over</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Notify buyer to inspect item</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowMarkDeliveredModal(null)}
-                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-100"
+                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   &times;
                 </button>
@@ -520,29 +515,29 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">
-                    Meetup / Delivery Confirmation Notes (Optional)
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                    Meetup / Handover Notes (Optional)
                   </label>
                   <textarea
                     value={deliveryNotes}
                     onChange={(e) => setDeliveryNotes(e.target.value)}
                     placeholder="e.g. Handed over at SUB building Osogbo campus. Item tested and working."
                     rows={3}
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 placeholder:text-slate-400"
                   />
                 </div>
 
-                <div className="p-3 bg-slate-50 rounded-2xl text-xs text-slate-500">
-                  Marking this order as delivered updates the buyer's screen with a one-click prompt to confirm and release your ₦{showMarkDeliveredModal.sellerReceives.toLocaleString()} earnings.
+                <div className="p-3 bg-slate-50 dark:bg-slate-800/70 rounded-2xl text-xs text-slate-500 dark:text-slate-400">
+                  Marking this order as delivered updates the buyer's screen with a prompt to confirm that they received the item in person.
                 </div>
 
                 <button
                   onClick={() => handleMarkDelivered(showMarkDeliveredModal)}
                   disabled={isProcessing}
-                  className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/30 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs shadow-md shadow-indigo-600/30 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <CheckCircle2 className="w-4 h-4" />}
-                  Confirm Delivery & Notify Buyer
+                  Confirm Handover & Notify Buyer
                 </button>
               </div>
             </motion.div>
@@ -553,26 +548,26 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
       {/* --- MODAL: OPEN DISPUTE --- */}
       <AnimatePresence>
         {showDisputeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl relative"
+              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl max-w-md w-full p-6 shadow-2xl relative text-slate-900 dark:text-slate-100"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center font-bold">
+                  <div className="w-9 h-9 rounded-xl bg-rose-100 dark:bg-rose-950/70 text-rose-700 dark:text-rose-300 flex items-center justify-center font-bold">
                     <AlertTriangle className="w-5 h-5" />
                   </div>
                   <div>
-                    <h3 className="font-extrabold text-base text-slate-900">Open Escrow Dispute</h3>
-                    <p className="text-xs text-slate-500">Freeze funds & request moderator review</p>
+                    <h3 className="font-extrabold text-base text-slate-900 dark:text-white">Report Issue</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">Flag transaction & request moderator review</p>
                   </div>
                 </div>
                 <button
                   onClick={() => setShowDisputeModal(null)}
-                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-100"
+                  className="p-2 rounded-xl text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                 >
                   &times;
                 </button>
@@ -580,11 +575,11 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Reason for Dispute</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Reason for Issue</label>
                   <select
                     value={disputeReason}
                     onChange={(e) => setDisputeReason(e.target.value)}
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs font-bold text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500"
                   >
                     <option value="Item condition different from description">Item condition different from description</option>
                     <option value="Item not working / defective">Item not working / defective</option>
@@ -596,28 +591,28 @@ export const OrdersView: React.FC<OrdersViewProps> = ({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 mb-1">Detailed Explanation</label>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Detailed Explanation</label>
                   <textarea
                     value={disputeDescription}
                     onChange={(e) => setDisputeDescription(e.target.value)}
-                    placeholder="Provide details about the issue. CampusPlug moderators will examine this to determine refund or release."
+                    placeholder="Provide details about the issue. CampusPlug moderators will examine this to assist."
                     rows={4}
-                    className="w-full px-3.5 py-2.5 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-indigo-500"
+                    className="w-full px-3.5 py-2.5 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-slate-100 focus:outline-none focus:border-indigo-500 placeholder:text-slate-400"
                     required
                   />
                 </div>
 
-                <div className="p-3 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-900">
-                  Opening a dispute freezes the escrow deposit of ₦{showDisputeModal.amount.toLocaleString()}. No funds can be released until CampusPlug admin moderation concludes investigation.
+                <div className="p-3 bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800 rounded-2xl text-xs text-rose-900 dark:text-rose-200">
+                  Submitting a dispute flags the order for CampusPlug student community moderators to review and mediate.
                 </div>
 
                 <button
                   onClick={() => handleOpenDispute(showDisputeModal)}
                   disabled={isProcessing || !disputeDescription.trim()}
-                  className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/30 flex items-center justify-center gap-2"
+                  className="w-full py-3 rounded-2xl bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs shadow-md shadow-rose-600/30 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   {isProcessing ? <RefreshCw className="w-4 h-4 animate-spin" /> : <AlertTriangle className="w-4 h-4" />}
-                  Submit Dispute to Admin
+                  Submit Issue to Admin
                 </button>
               </div>
             </motion.div>

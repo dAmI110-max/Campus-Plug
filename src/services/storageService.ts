@@ -166,10 +166,36 @@ const STORAGE_KEYS = {
   INITIALIZED: 'campusplug_initialized_v5',
 };
 
-// Safe LocalStorage helpers
+// Safe in-memory fallback store for iOS Safari Private Browsing / Lockdown mode / QuotaExceededError
+const memoryStore: Record<string, string> = {};
+
+function safeGetRaw(key: string): string | null {
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      const val = window.localStorage.getItem(key);
+      if (val !== null) return val;
+    }
+  } catch {
+    // Safari Private Mode or SecurityError
+  }
+  return memoryStore[key] ?? null;
+}
+
+function safeSetRaw(key: string, value: string): void {
+  memoryStore[key] = value;
+  try {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      window.localStorage.setItem(key, value);
+    }
+  } catch {
+    // Safari Private Mode, QuotaExceededError, or blocked storage
+  }
+}
+
+// Safe LocalStorage helpers with automatic memory fallback
 function getItem<T>(key: string, defaultValue: T): T {
   try {
-    const item = localStorage.getItem(key);
+    const item = safeGetRaw(key);
     return item ? (JSON.parse(item) as T) : defaultValue;
   } catch (error) {
     console.error(`Error reading ${key} from storage:`, error);
@@ -179,11 +205,15 @@ function getItem<T>(key: string, defaultValue: T): T {
 
 function setItem<T>(key: string, value: T): void {
   try {
-    localStorage.setItem(key, JSON.stringify(value));
+    safeSetRaw(key, JSON.stringify(value));
     // Dispatch custom event asynchronously so React rendering passes are never interrupted
     if (typeof window !== 'undefined') {
       setTimeout(() => {
-        window.dispatchEvent(new CustomEvent('campusplug_storage_update', { detail: { key } }));
+        try {
+          window.dispatchEvent(new CustomEvent('campusplug_storage_update', { detail: { key } }));
+        } catch {
+          // ignore event dispatch errors on older WebKit
+        }
       }, 0);
     }
   } catch (error) {
@@ -214,7 +244,7 @@ export class StorageService {
 
   // Initialize default data if not already set
   static initialize(): void {
-    const isInit = localStorage.getItem(STORAGE_KEYS.INITIALIZED);
+    const isInit = safeGetRaw(STORAGE_KEYS.INITIALIZED);
     if (!isInit) {
       this.resetToDefaults();
       return;
@@ -222,14 +252,14 @@ export class StorageService {
 
     // Dynamic one-time migration & demo data purge (checked via version flag to prevent infinite loops)
     const MIGRATION_VERSION = 'v5_uniosun_complete_faculties_and_computing';
-    const currentMigration = localStorage.getItem('campusplug_migration_ver');
+    const currentMigration = safeGetRaw('campusplug_migration_ver');
 
     if (currentMigration !== MIGRATION_VERSION) {
       try {
         // 1. Purge prototype / demo products from database
         const existingProducts = getItem<Product[]>(STORAGE_KEYS.PRODUCTS, []);
         const cleanProducts = existingProducts.filter((p) => !this.DEMO_PRODUCT_IDS.has(p.id));
-        localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(cleanProducts));
+        setItem(STORAGE_KEYS.PRODUCTS, cleanProducts);
 
         // 2. Clear demo favorites
         const existingFavorites = getItem<{ id: string; userId: string; productId: string; createdAt: string }[]>(
@@ -237,13 +267,13 @@ export class StorageService {
           []
         );
         const cleanFavorites = existingFavorites.filter((f) => !this.DEMO_PRODUCT_IDS.has(f.productId));
-        localStorage.setItem(STORAGE_KEYS.FAVORITES, JSON.stringify(cleanFavorites));
+        setItem(STORAGE_KEYS.FAVORITES, cleanFavorites);
 
         // 3. Ensure complete up-to-date faculties and departments (including Computing & IT)
-        localStorage.setItem(STORAGE_KEYS.FACULTIES, JSON.stringify(INITIAL_FACULTIES));
-        localStorage.setItem(STORAGE_KEYS.DEPARTMENTS, JSON.stringify(INITIAL_DEPARTMENTS));
-        localStorage.setItem(STORAGE_KEYS.CAMPUSES, JSON.stringify(INITIAL_CAMPUSES));
-        localStorage.setItem(STORAGE_KEYS.UNIVERSITIES, JSON.stringify(INITIAL_UNIVERSITIES));
+        setItem(STORAGE_KEYS.FACULTIES, INITIAL_FACULTIES);
+        setItem(STORAGE_KEYS.DEPARTMENTS, INITIAL_DEPARTMENTS);
+        setItem(STORAGE_KEYS.CAMPUSES, INITIAL_CAMPUSES);
+        setItem(STORAGE_KEYS.UNIVERSITIES, INITIAL_UNIVERSITIES);
 
         // 4. Ensure bhadmusoluwadamilare@gmail.com is designated Super Admin
         const users = this.getUsers();
@@ -265,7 +295,7 @@ export class StorageService {
             return u;
           });
         }
-        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(cleanUsers));
+        setItem(STORAGE_KEYS.USERS, cleanUsers);
 
         // 5. Ensure Super Admin admin records
         const adminRecords = getItem<AdminUserRecord[]>(STORAGE_KEYS.ADMIN_USERS, []);
@@ -298,9 +328,9 @@ export class StorageService {
             status: 'active',
           });
         }
-        localStorage.setItem(STORAGE_KEYS.ADMIN_USERS, JSON.stringify(cleanAdmins));
+        setItem(STORAGE_KEYS.ADMIN_USERS, cleanAdmins);
 
-        localStorage.setItem('campusplug_migration_ver', MIGRATION_VERSION);
+        safeSetRaw('campusplug_migration_ver', MIGRATION_VERSION);
       } catch (err) {
         console.warn('CampusPlug Migration Warning:', err);
       }
@@ -353,7 +383,7 @@ export class StorageService {
     setItem(STORAGE_KEYS.SUPPORT_TICKETS, INITIAL_SUPPORT_TICKETS);
     setItem(STORAGE_KEYS.FEATURE_FLAGS, INITIAL_FEATURE_FLAGS);
     setItem(STORAGE_KEYS.CURRENT_USER_ID, 'usr-tunde'); // Default to Student Seller
-    localStorage.setItem(STORAGE_KEYS.INITIALIZED, 'true');
+    safeSetRaw(STORAGE_KEYS.INITIALIZED, 'true');
   }
 
   // --- UNIVERSITIES & CAMPUSES ---

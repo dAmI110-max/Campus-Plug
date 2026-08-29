@@ -103,19 +103,19 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs">
+      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 15 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.2 }}
-          className="bg-white rounded-3xl shadow-2xl border border-slate-200 w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh]"
+          className="bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-slate-200 dark:border-slate-800 w-full max-w-xl overflow-hidden flex flex-col max-h-[90vh] text-slate-900 dark:text-slate-100"
         >
           {/* Header */}
           <div className="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-6 relative shrink-0">
             <button
               onClick={onClose}
-              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+              className="absolute top-5 right-5 p-2 text-slate-400 hover:text-white rounded-full hover:bg-white/10 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -156,10 +156,10 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
           <div className="p-6 overflow-y-auto space-y-5 flex-1">
             {step === 1 && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-100 flex items-start gap-3">
-                  <ShieldCheck className="w-5 h-5 text-indigo-600 shrink-0 mt-0.5" />
-                  <div className="text-xs text-indigo-950">
-                    <span className="font-bold block text-sm text-indigo-900 mb-0.5">
+                <div className="p-4 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 border border-indigo-100 dark:border-indigo-900/50 flex items-start gap-3">
+                  <ShieldCheck className="w-5 h-5 text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" />
+                  <div className="text-xs text-indigo-950 dark:text-indigo-200">
+                    <span className="font-bold block text-sm text-indigo-900 dark:text-indigo-300 mb-0.5">
                       Verified Student Identity
                     </span>
                     Your seller account is tied directly to your active student profile at{' '}
@@ -168,51 +168,51 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">
                       Student Name
                     </span>
-                    <span className="font-bold text-slate-900 text-sm">
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">
                       {currentUser?.fullName}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">
                       Campus Center
                     </span>
-                    <span className="font-bold text-slate-900 text-sm">
+                    <span className="font-bold text-slate-900 dark:text-white text-sm">
                       {currentUser?.campusName || 'Osogbo Main Campus'}
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">
                       Department / Level
                     </span>
-                    <span className="font-bold text-slate-900">
+                    <span className="font-bold text-slate-900 dark:text-white">
                       {currentUser?.departmentName || 'General Studies'} ({currentUser?.level || '100L'})
                     </span>
                   </div>
 
-                  <div className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200">
-                    <span className="text-slate-400 text-[10px] uppercase font-bold block">
+                  <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700">
+                    <span className="text-slate-500 dark:text-slate-400 text-[10px] uppercase font-bold block">
                       Account Status
                     </span>
-                    <span className="font-bold text-emerald-600 flex items-center gap-1">
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
                       <CheckCircle2 className="w-3.5 h-3.5" /> Active Student
                     </span>
                   </div>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-900 text-white space-y-2">
+                <div className="p-4 rounded-2xl bg-slate-900 dark:bg-slate-950 text-white space-y-2 border border-slate-800">
                   <div className="flex items-center gap-2 text-amber-400 text-xs font-bold">
                     <TrendingUp className="w-4 h-4" /> Why sell on CampusPlug?
                   </div>
                   <ul className="text-xs text-slate-300 space-y-1 list-disc list-inside">
                     <li>Direct access to thousands of verified UNIOSUN campus buyers</li>
-                    <li>Built-in Escrow wallet for guaranteed payments upon delivery</li>
-                    <li>Zero upfront setup fees or listing listing commissions</li>
+                    <li>Secure Student Escrow protection and direct WhatsApp inquiries</li>
+                    <li>Zero upfront setup fees or listing commissions</li>
                   </ul>
                 </div>
               </div>
@@ -221,7 +221,7 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
             {step === 2 && (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5">
                     Seller Bio / Shop Pitch
                   </label>
                   <textarea
@@ -229,43 +229,43 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
                     value={sellerBio}
                     onChange={(e) => setSellerBio(e.target.value)}
                     placeholder="Describe what you sell or offer to fellow students..."
-                    className="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                    className="w-full text-xs p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                   />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-indigo-600" /> Phone Contact *
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" /> Phone Contact *
                     </label>
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="e.g. 08123456789"
-                      className="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                      className="w-full text-xs p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
-                      <Phone className="w-3.5 h-3.5 text-emerald-600" /> WhatsApp Number
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" /> WhatsApp Number
                     </label>
                     <input
                       type="tel"
                       value={whatsapp}
                       onChange={(e) => setWhatsapp(e.target.value)}
                       placeholder="e.g. 2348123456789"
-                      className="w-full text-xs p-3 rounded-2xl border border-slate-200 focus:outline-hidden focus:ring-2 focus:ring-indigo-500"
+                      className="w-full text-xs p-3 rounded-2xl bg-slate-50 dark:bg-slate-800/90 border border-slate-300 dark:border-slate-700 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5 flex items-center gap-1">
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-1.5 flex items-center gap-1">
                     <MapPin className="w-3.5 h-3.5 text-rose-500" /> Preferred Meetup / Pickup Locations
                   </label>
-                  <p className="text-[11px] text-slate-500 mb-2">
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400 mb-2">
                     Select the public spots on campus where you can hand over items to buyers:
                   </p>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -276,14 +276,14 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
                           key={loc}
                           type="button"
                           onClick={() => toggleLocation(loc)}
-                          className={`p-2.5 rounded-xl text-left text-xs font-medium border transition-all flex items-center justify-between ${
+                          className={`p-2.5 rounded-xl text-left text-xs font-medium border transition-all flex items-center justify-between cursor-pointer ${
                             isSelected
-                              ? 'bg-indigo-50/80 border-indigo-300 text-indigo-900 font-bold'
-                              : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                              ? 'bg-indigo-50/80 dark:bg-indigo-950/70 border-indigo-300 dark:border-indigo-700 text-indigo-900 dark:text-indigo-200 font-bold'
+                              : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                           }`}
                         >
                           <span className="truncate">{loc}</span>
-                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 shrink-0" />}
+                          {isSelected && <CheckCircle2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />}
                         </button>
                       );
                     })}
@@ -294,29 +294,29 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
 
             {step === 3 && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 space-y-2">
-                  <div className="flex items-center gap-2 font-bold text-amber-900 text-sm">
-                    <Lock className="w-4 h-4 text-amber-600" />
+                <div className="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 space-y-2">
+                  <div className="flex items-center gap-2 font-bold text-amber-900 dark:text-amber-300 text-sm">
+                    <Lock className="w-4 h-4 text-amber-600 dark:text-amber-400" />
                     CampusPlug Escrow & Safety Pledge
                   </div>
-                  <p className="text-xs text-amber-900/90 leading-relaxed">
+                  <p className="text-xs text-amber-900/90 dark:text-amber-200 leading-relaxed">
                     By activating your seller account, you agree to:
                   </p>
-                  <ul className="text-xs text-amber-950/80 space-y-1.5 list-disc list-inside">
+                  <ul className="text-xs text-amber-950/80 dark:text-amber-300 space-y-1.5 list-disc list-inside">
                     <li>Only list genuine, working, and accurately described student items</li>
                     <li>Conduct all product viewings in safe, well-lit campus meetup zones</li>
-                    <li>Accept Escrow orders securely via the CampusPlug Wallet</li>
-                    <li>Never request direct wire transfers or advance off-platform deposits</li>
+                    <li>Fulfill orders reliably and keep accurate communication with student buyers</li>
+                    <li>Never request advance off-platform bank wire deposits</li>
                   </ul>
                 </div>
 
-                <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 flex items-center gap-3">
+                <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 flex items-center gap-3">
                   <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center text-white font-bold shrink-0">
                     <Sparkles className="w-5 h-5 text-amber-300" />
                   </div>
                   <div>
-                    <div className="text-xs font-bold text-slate-900">Instant Activation</div>
-                    <div className="text-[11px] text-slate-500">
+                    <div className="text-xs font-bold text-slate-900 dark:text-white">Instant Activation</div>
+                    <div className="text-[11px] text-slate-500 dark:text-slate-400">
                       Your seller badge will be active immediately. You can start posting listings right away.
                     </div>
                   </div>
@@ -326,12 +326,12 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
           </div>
 
           {/* Footer Buttons */}
-          <div className="p-4 sm:p-6 bg-slate-50 border-t border-slate-200 flex items-center justify-between gap-3 shrink-0">
+          <div className="p-4 sm:p-6 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 shrink-0">
             {step > 1 ? (
               <button
                 type="button"
                 onClick={() => setStep((s) => (s - 1) as 1 | 2 | 3)}
-                className="px-4 py-2.5 rounded-xl border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-colors"
+                className="px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
               >
                 Back
               </button>
@@ -339,7 +339,7 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-500 hover:text-slate-800 transition-colors"
+                className="px-4 py-2.5 rounded-xl text-xs font-semibold text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 transition-colors cursor-pointer"
               >
                 Cancel
               </button>
@@ -355,7 +355,7 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
                   }
                   setStep((s) => (s + 1) as 1 | 2 | 3);
                 }}
-                className="px-6 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-slate-900/20 transition-all"
+                className="px-6 py-2.5 rounded-xl bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-100 text-white dark:text-slate-900 font-bold text-xs flex items-center gap-2 shadow-md shadow-slate-900/20 transition-all cursor-pointer"
               >
                 Continue <ArrowRight className="w-4 h-4" />
               </button>
@@ -364,7 +364,7 @@ export const SellerOnboardingModal: React.FC<SellerOnboardingModalProps> = ({
                 type="button"
                 disabled={isSubmitting}
                 onClick={handleFinish}
-                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50"
+                className="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs flex items-center gap-2 shadow-md shadow-indigo-600/30 transition-all disabled:opacity-50 cursor-pointer"
               >
                 {isSubmitting ? (
                   'Activating Seller Account...'

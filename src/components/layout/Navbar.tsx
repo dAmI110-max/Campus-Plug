@@ -465,19 +465,21 @@ export const Navbar: React.FC<NavbarProps> = ({
             {/* Theme Toggle Button */}
             <ThemeToggle variant="dropdown" />
 
-            {/* Wallet quick balance if logged in */}
+            {/* Escrow balance indicator if logged in */}
             {currentUser && (
               <button
-                onClick={() => onNavigate('wallet')}
-                className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-bold transition-all ${
-                  currentView === 'wallet'
-                    ? 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-indigo-900/50'
+                onClick={() => onNavigate('orders')}
+                className={`hidden md:flex items-center gap-1.5 px-3 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                  currentView === 'orders'
+                    ? 'bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 border border-amber-200 dark:border-amber-900/50 shadow-xs'
                     : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
                 }`}
+                title="Your Campus Escrow Balance"
               >
-                <Wallet className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                <span className="font-mono text-indigo-900 dark:text-indigo-200 font-bold">
-                  ₦{userWallet?.availableBalance.toLocaleString() || '0'}
+                <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">Escrow:</span>
+                <span className="font-mono text-amber-700 dark:text-amber-300 font-bold">
+                  ₦{(userWallet?.pendingBalance || 0).toLocaleString()}
                 </span>
               </button>
             )}
@@ -547,25 +549,19 @@ export const Navbar: React.FC<NavbarProps> = ({
                       className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-between"
                     >
                       <div className="flex items-center gap-2.5">
-                        <ShoppingBag className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                        My Orders & Escrow
+                        <ShieldCheck className="w-4 h-4 text-amber-500" />
+                        <div>
+                          <div>Orders & Escrow</div>
+                          <div className="text-[10px] font-normal text-slate-400">
+                            ₦{(userWallet?.pendingBalance || 0).toLocaleString()} in escrow
+                          </div>
+                        </div>
                       </div>
                       {activeOrdersCount > 0 && (
                         <span className="px-1.5 py-0.2 text-[9px] font-black bg-indigo-600 text-white rounded-full">
                           {activeOrdersCount}
                         </span>
                       )}
-                    </button>
-
-                    <button
-                      onClick={() => {
-                        onNavigate('wallet');
-                        setShowUserDropdown(false);
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center gap-2.5"
-                    >
-                      <Wallet className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                      Wallet & Escrow Balance
                     </button>
 
                     {isAdmin && (
